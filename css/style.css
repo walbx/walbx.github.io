@@ -169,6 +169,11 @@ body {
   text-decoration: none;
   background-image: none;
 }
+#wrap {
+  min-height: 100%;
+  width: 100%;
+  margin: auto;
+}
 .article-meta a,
 a.article-title,
 .article-entry a,
@@ -747,8 +752,9 @@ a.article-title:hover,
   color: #ddd;
 }
 #footer {
-  padding: 50px 0;
+  height: 50px;
   text-align: center;
+  margin-top: -50px;
 }
 #footer a {
   font-weight: 600;
