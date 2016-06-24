@@ -113,7 +113,8 @@ body,
   height: 100%;
 }
 body {
-  background: #fff url("imgs/bg3.png") center;
+  background: #fff center;
+  background-image: url("../imgs/TB1C1900-812.png"), url("../imgs/TB1v1900-812.png");
   font: 16px 'PT Serif', 'STZhongsong', '华文中宋', 'Microsoft Yahei', serif;
   -webkit-text-size-adjust: 100%;
 }
