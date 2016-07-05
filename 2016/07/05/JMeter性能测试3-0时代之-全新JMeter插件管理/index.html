@@ -3,17 +3,28 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Luo&#39;s</title>
+  <title>JMeter性能测试3.0时代之-全新JMeter插件管理 - Luo&#39;s</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Luo&apos;s Blog | Java | Spring | Test">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Luo's">
-<meta property="og:url" content="http://walbx.github.io/index.html">
+  <meta name="description" content="今年五月，老牌开源性能测试工具Apache JMeter迎来了自2011年11月成为Apache顶级项目以来的首次大版本更新–从2.13更新到3.0。这对于广大JMeter用户来说无疑是一个好消息，它让我们看到了这个项目的活力。也是因此，打算写一些自己感受到的JMeter近来的变化。
+
+JMeterJMeter，老牌，开源，轻量，Apache基金会的顶级项目，光是这些关键字就足以让大量用户将其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JMeter性能测试3.0时代之-全新JMeter插件管理">
+<meta property="og:url" content="http://walbx.github.io/2016/07/05/JMeter性能测试3-0时代之-全新JMeter插件管理/index.html">
 <meta property="og:site_name" content="Luo's">
-<meta property="og:description" content="Luo&apos;s Blog | Java | Spring | Test">
+<meta property="og:description" content="今年五月，老牌开源性能测试工具Apache JMeter迎来了自2011年11月成为Apache顶级项目以来的首次大版本更新–从2.13更新到3.0。这对于广大JMeter用户来说无疑是一个好消息，它让我们看到了这个项目的活力。也是因此，打算写一些自己感受到的JMeter近来的变化。
+
+JMeterJMeter，老牌，开源，轻量，Apache基金会的顶级项目，光是这些关键字就足以让大量用户将其">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1936843-ea3b7bb202cd0be5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1936843-4a2e153a94ed3a24.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1936843-13d80ced4b63dd3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2016-07-05T01:44:08.727Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Luo's">
-<meta name="twitter:description" content="Luo&apos;s Blog | Java | Spring | Test">
+<meta name="twitter:title" content="JMeter性能测试3.0时代之-全新JMeter插件管理">
+<meta name="twitter:description" content="今年五月，老牌开源性能测试工具Apache JMeter迎来了自2011年11月成为Apache顶级项目以来的首次大版本更新–从2.13更新到3.0。这对于广大JMeter用户来说无疑是一个好消息，它让我们看到了这个项目的活力。也是因此，打算写一些自己感受到的JMeter近来的变化。
+
+JMeterJMeter，老牌，开源，轻量，Apache基金会的顶级项目，光是这些关键字就足以让大量用户将其">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1936843-ea3b7bb202cd0be5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
   
     <link rel="icon" href="/favicon.png">
@@ -69,16 +80,15 @@ var _hmt = _hmt || [];
     </div>
   </div>
 </header>
-	    <section id="main" class="outer">
-      <article id="post-JMeter性能测试3-0时代之-全新JMeter插件管理" class="article article-type-post" itemscope itemprop="blogPost">
+	    <section id="main" class="outer"><article id="post-JMeter性能测试3-0时代之-全新JMeter插件管理" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/05/JMeter性能测试3-0时代之-全新JMeter插件管理/">JMeter性能测试3.0时代之-全新JMeter插件管理</a>
+    <h1 class="article-title" itemprop="name">
+      JMeter性能测试3.0时代之-全新JMeter插件管理
     </h1>
   
 
@@ -132,6 +142,11 @@ var _hmt = _hmt || [];
       
     </div>
     
+      <div class="article-toc">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#JMeter"><span class="toc-number">1.</span> <span class="toc-text">JMeter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JMeter-Plugins"><span class="toc-number">2.</span> <span class="toc-text">JMeter Plugins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Plugins-Manager"><span class="toc-number">3.</span> <span class="toc-text">Plugins Manager</span></a></li></ol>
+      </div>
+    
     
       <footer class="article-footer">
         
@@ -141,95 +156,20 @@ var _hmt = _hmt || [];
     
   </div>
   
-</article>
-
-
     
-      <article id="post-正确、安全地SpringBoot应用" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/27/正确、安全地SpringBoot应用/">正确、安全地停止SpringBoot应用</a>
-    </h1>
   
+    <a href="/2016/06/27/正确、安全地SpringBoot应用/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">正确、安全地停止SpringBoot应用&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
 
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2016/06/27/正确、安全地SpringBoot应用/" class="article-date">
-  <time datetime="2016-06-27T08:35:29.000Z" itemprop="datePublished">2016-06-27</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/我用/">我用</a>
-  </div>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><a href="http://projects.spring.io/spring-boot/">Spring Boot</a>，作为Spring框架对“约定优先于配置(Convention Over Configuration)”理念的最佳实践的产物，它能帮助我们很快捷的创建出独立运行、产品级别的基于Spring框架的应用，大部分Spring Boot应用只需要非常少的配置就可以快速运行起来，是一个与微服务(MicroServices)相当契合的微框架。<br>网络上关于Spring Boot的QuickStart式中文内容已经相当丰富，但是对于部署后怎样便捷、安全地停止服务(shutdown)，还比较缺乏，最近发现Spring Boot的官方指南更新了相关内容，因此结合该部分更新，对如何<strong>基于官方提供的特性</strong>正确地停止Spring Boot应用进行简单说明。</p>
-<p>主要有两种方式：通过<code>HTTP</code>发送<code>shutdown</code>信号，或者通过<code>service stop</code>的方式<br>
-        
-          <p class="article-more-link">
-            <a href="/2016/06/27/正确、安全地SpringBoot应用/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    
-    
-      <footer class="article-footer">
-        
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/微服务/">微服务</a></li></ul>
-
-      </footer>
-    
-  </div>
   
 </article>
 
-
-    
-      <article id="post-FirstPost" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/21/FirstPost/">Welcome</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      <a href="/2016/06/21/FirstPost/" class="article-date">
-  <time datetime="2016-06-21T06:06:05.000Z" itemprop="datePublished">2016-06-21</time>
-</a>
-      
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>  Welcome to my blog, it is under construction.</p>
-
-      
-    </div>
-    
-    
-  </div>
-  
-</article>
-
-
-    </section>
+</section>
 	</div>
 	    <footer id="footer">
   
