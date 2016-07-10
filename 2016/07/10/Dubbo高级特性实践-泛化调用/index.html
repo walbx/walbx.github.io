@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Dubbo高级特性实践-泛化调用 - Luo&#39;s</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="引言当后端Java服务用Dubbo协议作为RPC方案的基础，但部分消费方是前端Restful的PHP服务，不能直接调用，于是在中间架设了Router服务提供统一的基于HTTP的后端调用入口。而Router调用后端Java服务就应用了Dubbo的高级特性–泛化调用
+
+通过GenericService接口来处理所有服务请求
+以PHP端调用参数中的方法名和方法参数作为远程调用的入参，最后将远程调用的re">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo高级特性实践-泛化调用">
+<meta property="og:url" content="http://walbx.github.io/2016/07/10/Dubbo高级特性实践-泛化调用/index.html">
+<meta property="og:site_name" content="Luo's">
+<meta property="og:description" content="引言当后端Java服务用Dubbo协议作为RPC方案的基础，但部分消费方是前端Restful的PHP服务，不能直接调用，于是在中间架设了Router服务提供统一的基于HTTP的后端调用入口。而Router调用后端Java服务就应用了Dubbo的高级特性–泛化调用
+
+通过GenericService接口来处理所有服务请求
+以PHP端调用参数中的方法名和方法参数作为远程调用的入参，最后将远程调用的re">
+<meta property="og:updated_time" content="2016-07-10T06:30:59.665Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dubbo高级特性实践-泛化调用">
+<meta name="twitter:description" content="引言当后端Java服务用Dubbo协议作为RPC方案的基础，但部分消费方是前端Restful的PHP服务，不能直接调用，于是在中间架设了Router服务提供统一的基于HTTP的后端调用入口。而Router调用后端Java服务就应用了Dubbo的高级特性–泛化调用
+
+通过GenericService接口来处理所有服务请求
+以PHP端调用参数中的方法名和方法参数作为远程调用的入参，最后将远程调用的re">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-79979510-1', 'auto');
+ga('send', 'pageview');
+
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?cf39e851e71b5ad3a3c55f2aea6457b3";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+  	<div id="wrap">
+	    <header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo logo-text" href="/">Luo&#39;s</a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">档案</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+    </div>
+  </div>
+</header>
+	    <section id="main" class="outer"><article id="post-Dubbo高级特性实践-泛化调用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Dubbo高级特性实践-泛化调用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      <a href="/2016/07/10/Dubbo高级特性实践-泛化调用/" class="article-date">
+  <time datetime="2016-07-10T06:24:24.000Z" itemprop="datePublished">2016-07-10</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/我用/">我用</a>
+  </div>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>当后端Java服务用<a href="http://dubbo.io/" target="_blank" rel="external">Dubbo</a>协议作为RPC方案的基础，但部分消费方是前端Restful的PHP服务，不能直接调用，于是在中间架设了Router服务提供统一的基于HTTP的后端调用入口。<br>而Router调用后端Java服务就应用了Dubbo的高级特性–<strong>泛化调用</strong></p>
+<ul>
+<li>通过GenericService接口来处理所有服务请求</li>
+<li>以PHP端调用参数中的方法名和方法参数作为远程调用的入参，最后将远程调用的result返回给PHP端。</li>
+</ul>
+<p>本文将用一个小Demo来演示上面所述的<strong>泛化调用</strong>应用场景</p>
+<a id="more"></a>
+<h2 id="零-Dubbo简介"><a href="#零-Dubbo简介" class="headerlink" title="零.Dubbo简介"></a>零.Dubbo简介</h2><p><em>DUBBO是一个分布式服务框架，致力于提供高性能和透明化的RPC远程服务调用方案，是阿里巴巴SOA服务化治理方案的核心框架，每天为2,000+个服务提供3,000,000,000+次访问量支持，并被广泛应用于阿里巴巴集团的各成员站点。</em><br>– Dubbo官方描述</p>
+<h3 id="Dubbo能做什么："><a href="#Dubbo能做什么：" class="headerlink" title="Dubbo能做什么："></a><em>Dubbo能做什么：</em></h3><ul>
+<li>透明化的远程方法调用 <ul>
+<li>就像调用本地方法一样调用远程方法</li>
+<li>只需简单配置，没有任何API侵入。 </li>
+</ul>
+</li>
+<li>软负载均衡及容错机制<ul>
+<li>可在内网替代F5等硬件负载均衡器</li>
+</ul>
+</li>
+<li>服务自动注册与发现<ul>
+<li>不再需要写死服务提供方地址，注册中心基于接口名查询服务提 供者的IP地址，并且能够平滑添加或删除服务提供者 </li>
+</ul>
+</li>
+</ul>
+<p>– 《Dubbo功能介绍》(<em>官方资料</em>)</p>
+<p><em>注：Dubbo的基本使用介绍不在本文范畴，如有需要请自行参考<a href="http://dubbo.io/" target="_blank" rel="external">官方资料</a></em></p>
+<h2 id="一-后端API"><a href="#一-后端API" class="headerlink" title="一.后端API"></a>一.后端API</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserInfoService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Map&lt;String, String&gt; <span class="title">getUser</span><span class="params">(String id)</span></span>;</span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, String&gt;[] getUsers();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="二-Router端dubbo配置"><a href="#二-Router端dubbo配置" class="headerlink" title="二.Router端dubbo配置"></a>二.Router端dubbo配置</h2><p><code>dubboconf.properties:</code><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">application.name=router</span><br><span class="line">registry.address=<span class="string">zookeeper:</span><span class="comment">//address1?buckup=address2,address3</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="三-前端服务post到Router的Request-Body示例："><a href="#三-前端服务post到Router的Request-Body示例：" class="headerlink" title="三.前端服务post到Router的Request Body示例："></a>三.前端服务post到Router的Request Body示例：</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"interfaceName"</span>: <span class="string">"foo"</span>, </span><br><span class="line">    <span class="attr">"methodName"</span>: <span class="string">"bar"</span>, </span><br><span class="line">    <span class="attr">"methodParams"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"id"</span>: <span class="string">"xxx"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="四-处理前端参数用的Dto"><a href="#四-处理前端参数用的Dto" class="headerlink" title="四.处理前端参数用的Dto"></a>四.处理前端参数用的Dto</h2><p><code>RequestDto.java:</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Created by Luo</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestDto</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String interfaceName;</span><br><span class="line">    <span class="keyword">private</span> String methodName</span><br><span class="line">    <span class="keyword">private</span> Map[] methodParams;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getInterfaceName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> interfaceName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setInterfaceName</span><span class="params">(String interfaceName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.interfaceName =  interfaceName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMethodName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> methodName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMethodName</span><span class="params">(String methodName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.methodName = methodName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> Map[] getMethodParams() &#123;</span><br><span class="line">        <span class="keyword">return</span> methodParams;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMethodParam</span><span class="params">(Map[] methodParams)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.methodParams = methodParams;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="五-Router服务入口"><a href="#五-Router服务入口" class="headerlink" title="五.Router服务入口"></a>五.Router服务入口</h2><p><code>RouterController.java:</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Created by Luo</span><br><span class="line"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">        <span class="meta">@RequestMapping</span>(value = <span class="string">"/router/"</span>, method = RequestMethod.POST)</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">getUser</span><span class="params">(@ModelAttribute RequestDto dto)</span> </span>&#123;</span><br><span class="line">            Map map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">            map.put(<span class="string">"ParamType"</span>, <span class="string">"java.lang.String"</span>);  <span class="comment">//后端接口参数类型</span></span><br><span class="line">            map.put(<span class="string">"Object"</span>, dto.getMethodParams()[<span class="number">0</span>].get(<span class="string">"id"</span>));  <span class="comment">//用以调用后端接口的实参</span></span><br><span class="line"></span><br><span class="line">            List&lt;Map&lt;String, Object&gt;&gt; paramInfos= <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            paramInfos.add(map);</span><br><span class="line"></span><br><span class="line">            DubboServiceFactory dubbo = DubboServiceFactory.getInstance();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> dubbo.genericInvoke(dto.getInterfaceName(), dto.getMethodName(), paramInfos);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><em>注：本文旨在演示泛化调用的一种应用方式，为简明起见，代码中直接从dto中获取了指定参数，而并没有完整实现其路由功能，望见谅。</em></p>
+<h2 id="六-通过GenericService进行泛化调用"><a href="#六-通过GenericService进行泛化调用" class="headerlink" title="六.通过GenericService进行泛化调用"></a>六.通过GenericService进行泛化调用</h2><p><code>DubboServiceFactory.java</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> local.demo.genericservice;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.ApplicationConfig;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.ReferenceConfig;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.RegistryConfig;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.utils.ReferenceConfigCache;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.rpc.service.GenericService;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Created by Luo</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DubboServiceFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ApplicationConfig application;</span><br><span class="line">    <span class="keyword">private</span> RegistryConfig registry;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> DubboServiceFactory INSTANCE = <span class="keyword">new</span> DubboServiceFactory();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">DubboServiceFactory</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">        ClassLoader loader = DubboServiceFactory.class.getClassLoader();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            prop.load(loader.getResourceAsStream(<span class="string">"dubboconf.properties"</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ApplicationConfig applicationConfig = <span class="keyword">new</span> ApplicationConfig();</span><br><span class="line">        applicationConfig.setName(prop.getProperty(<span class="string">"application.name"</span>)); </span><br><span class="line">        <span class="comment">//这里配置了dubbo的application信息*(demo只配置了name)*，因此demo没有额外的dubbo.xml配置文件</span></span><br><span class="line">        RegistryConfig registryConfig = <span class="keyword">new</span> RegistryConfig();</span><br><span class="line">        registryConfig.setAddress(prop.getProperty(<span class="string">"registry.address"</span>)); </span><br><span class="line">        <span class="comment">//这里配置dubbo的注册中心信息，因此demo没有额外的dubbo.xml配置文件</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.application = applicationConfig;</span><br><span class="line">        <span class="keyword">this</span>.registry = registryConfig;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> DubboServiceFactory <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">genericInvoke</span><span class="params">(String interfaceClass, String methodName, List&lt;Map&lt;String, Object&gt;&gt; parameters)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        ReferenceConfig&lt;GenericService&gt; reference = <span class="keyword">new</span> ReferenceConfig&lt;GenericService&gt;();</span><br><span class="line">        reference.setApplication(application); </span><br><span class="line">        reference.setRegistry(registry); </span><br><span class="line">        reference.setInterface(interfaceClass); <span class="comment">// 接口名 </span></span><br><span class="line">        reference.setGeneric(<span class="keyword">true</span>); <span class="comment">// 声明为泛化接口 </span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">//ReferenceConfig实例很重，封装了与注册中心的连接以及与提供者的连接，</span></span><br><span class="line">        <span class="comment">//需要缓存，否则重复生成ReferenceConfig可能造成性能问题并且会有内存和连接泄漏。</span></span><br><span class="line">        <span class="comment">//API方式编程时，容易忽略此问题。</span></span><br><span class="line">        <span class="comment">//这里使用dubbo内置的简单缓存工具类进行缓存</span></span><br><span class="line">        </span><br><span class="line">        ReferenceConfigCache cache = ReferenceConfigCache.getCache();</span><br><span class="line">        GenericService genericService = cache.get(reference); </span><br><span class="line">        <span class="comment">// 用com.alibaba.dubbo.rpc.service.GenericService可以替代所有接口引用 </span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> len = parameters.size();</span><br><span class="line">        String[] invokeParamTyeps = <span class="keyword">new</span> String[len];</span><br><span class="line">        Object[] invokeParams = <span class="keyword">new</span> Object[len];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++)&#123;</span><br><span class="line">            invokeParamTyeps[i] = parameters.get(i).get(<span class="string">"ParamType"</span>) + <span class="string">""</span>;</span><br><span class="line">            invokeParams[i] = parameters.get(i).get(<span class="string">"Object"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> genericService.$invoke(methodName, invokeParamTyeps, invokeParams);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="七-部署"><a href="#七-部署" class="headerlink" title="七.部署"></a>七.部署</h2><p>将Router部署到Jetty/Tomcat等容器，或者直接使用<a href="http://projects.spring.io/spring-boot/" target="_blank" rel="external">SpringBoot</a>开发，发布为内嵌Jetty/Tomcat的独立jar包，即可向前端服务提供服务。</p>
+
+      
+    </div>
+    
+      <div class="article-toc">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-number">1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#零-Dubbo简介"><span class="toc-number">2.</span> <span class="toc-text">零.Dubbo简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo能做什么："><span class="toc-number">2.1.</span> <span class="toc-text">Dubbo能做什么：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-后端API"><span class="toc-number">3.</span> <span class="toc-text">一.后端API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-Router端dubbo配置"><span class="toc-number">4.</span> <span class="toc-text">二.Router端dubbo配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-前端服务post到Router的Request-Body示例："><span class="toc-number">5.</span> <span class="toc-text">三.前端服务post到Router的Request Body示例：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-处理前端参数用的Dto"><span class="toc-number">6.</span> <span class="toc-text">四.处理前端参数用的Dto</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-Router服务入口"><span class="toc-number">7.</span> <span class="toc-text">五.Router服务入口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六-通过GenericService进行泛化调用"><span class="toc-number">8.</span> <span class="toc-text">六.通过GenericService进行泛化调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七-部署"><span class="toc-number">9.</span> <span class="toc-text">七.部署</span></a></li></ol>
+      </div>
+    
+    
+      <footer class="article-footer">
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dubbo/">Dubbo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/微服务/">微服务</a></li></ul>
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/07/05/JMeter性能测试3-0时代之-全新JMeter插件管理/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">JMeter性能测试3.0时代之-全新JMeter插件管理&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+	</div>
+	    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Luo&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+	    
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+  </div>
+</body>
+</html>
