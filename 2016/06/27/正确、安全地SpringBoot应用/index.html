@@ -1,122 +1,174 @@
 <!DOCTYPE html>
-<html>
+
+
+  <html class="light page-post">
+
+
 <head>
   <meta charset="utf-8">
   
-  <title>正确、安全地停止SpringBoot应用 - Luo&#39;s</title>
+  <title>正确、安全地停止SpringBoot应用 | Luo&#39;s Blog</title>
+
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Spring Boot,微服务," />
+  
+
   <meta name="description" content="基于官方特性的两种正确、安全地停止Spring Boot应用服务的方法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="正确、安全地停止SpringBoot应用">
 <meta property="og:url" content="http://walbx.github.io/2016/06/27/正确、安全地SpringBoot应用/index.html">
-<meta property="og:site_name" content="Luo's">
+<meta property="og:site_name" content="Luo's Blog">
 <meta property="og:description" content="基于官方特性的两种正确、安全地停止Spring Boot应用服务的方法">
-<meta property="og:updated_time" content="2016-06-28T01:56:53.668Z">
+<meta property="og:updated_time" content="2016-07-12T02:24:10.676Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="正确、安全地停止SpringBoot应用">
 <meta name="twitter:description" content="基于官方特性的两种正确、安全地停止Spring Boot应用服务的方法">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-ga('create', 'UA-79979510-1', 'auto');
-ga('send', 'pageview');
+  
 
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "//hm.baidu.com/hm.js?cf39e851e71b5ad3a3c55f2aea6457b3";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-<!-- End Google Analytics -->
+  
+    <link rel="icon" href="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5scw4o8tnj206t06sdgf.jpg">
+  
 
+  <link href="/css/styles.css?v=028c63b1" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
 
 </head>
 
 <body>
-  <div id="container">
-  	<div id="wrap">
-	    <header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo logo-text" href="/">Luo&#39;s</a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/">首页</a>
-        
-          <a class="main-nav-link" href="/archives">档案</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-    </div>
-  </div>
-</header>
-	    <section id="main" class="outer"><article id="post-正确、安全地SpringBoot应用" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+
+
   
-    <h1 class="article-title" itemprop="name">
-      正确、安全地停止SpringBoot应用
-    </h1>
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
   
 
-      </header>
-    
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方式一：通过HTTP发送shutdown信号"><span class="toc-text">方式一：通过HTTP发送shutdown信号</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-在pom-xml中引入actuator依赖"><span class="toc-text">1. 在pom.xml中引入actuator依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-开启shutdown-endpoint"><span class="toc-text">2. 开启shutdown endpoint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-发送shutdown信号"><span class="toc-text">3. 发送shutdown信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-安全设置"><span class="toc-text">4. 安全设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方式二：部署为Unix-Linux-Service"><span class="toc-text">方式二：部署为Unix/Linux Service</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-在pom-xml中引入插件："><span class="toc-text">1. 在pom.xml中引入插件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-设置为系统服务"><span class="toc-text">2. 设置为系统服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-赋予可执行权限："><span class="toc-text">3. 赋予可执行权限：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-以系统服务的方式管理"><span class="toc-text">4. 以系统服务的方式管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义参数"><span class="toc-text">自定义参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安全设置"><span class="toc-text">安全设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References:</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-正确、安全地SpringBoot应用" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">正确、安全地停止SpringBoot应用</h1>
+
     <div class="article-meta">
-      <a href="/2016/06/27/正确、安全地SpringBoot应用/" class="article-date">
-  <time datetime="2016-06-27T08:35:29.000Z" itemprop="datePublished">2016-06-27</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/我用/">我用</a>
-  </div>
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.06.27</span>
+      </span>
 
       
-    </div>
-    <div class="article-entry" itemprop="articleBody">
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Luo</span>
+        </span>
       
-        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><a href="http://projects.spring.io/spring-boot/" target="_blank" rel="external">Spring Boot</a>，作为Spring框架对“约定优先于配置(Convention Over Configuration)”理念的最佳实践的产物，它能帮助我们很快捷的创建出独立运行、产品级别的基于Spring框架的应用，大部分Spring Boot应用只需要非常少的配置就可以快速运行起来，是一个与微服务(MicroServices)相当契合的微框架。<br>网络上关于Spring Boot的QuickStart式中文内容已经相当丰富，但是对于部署后怎样便捷、安全地停止服务(shutdown)，还比较缺乏，最近发现Spring Boot的官方指南更新了相关内容，因此结合该部分更新，对如何<strong>基于官方提供的特性</strong>正确地停止Spring Boot应用进行简单说明。</p>
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/技能锻造室/">技能锻造室</a>
+  </span>
+
+
+
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><a href="http://projects.spring.io/spring-boot/" target="_blank" rel="external">Spring Boot</a>，作为Spring框架对“约定优先于配置(Convention Over Configuration)”理念的最佳实践的产物，它能帮助我们很快捷的创建出独立运行、产品级别的基于Spring框架的应用，大部分Spring Boot应用只需要非常少的配置就可以快速运行起来，是一个与微服务(MicroServices)相当契合的微框架。<br>网络上关于Spring Boot的QuickStart式中文内容已经相当丰富，但是对于部署后怎样便捷、安全地停止服务(shutdown)，还比较缺乏，最近发现Spring Boot的官方指南更新了相关内容，因此结合该部分更新，对如何<strong>基于官方提供的特性</strong>正确地停止Spring Boot应用进行简单说明。</p>
 <p>主要有两种方式：通过<code>HTTP</code>发送<code>shutdown</code>信号，或者通过<code>service stop</code>的方式<br><a id="more"></a></p>
 <h2 id="方式一：通过HTTP发送shutdown信号"><a href="#方式一：通过HTTP发送shutdown信号" class="headerlink" title="方式一：通过HTTP发送shutdown信号"></a>方式一：通过<code>HTTP</code>发送<code>shutdown</code>信号</h2><p>该方式主要依赖<code>Spring Boot Actuator</code>的<code>endpoint</code>特性，具体步骤如下：</p>
-<h3 id="1-在pom-xml中引入actuator依赖"><a href="#1-在pom-xml中引入actuator依赖" class="headerlink" title="1. 在pom.xml中引入actuator依赖"></a>1. 在<code>pom.xml</code>中引入<code>actuator</code>依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="2-开启shutdown-endpoint"><a href="#2-开启shutdown-endpoint" class="headerlink" title="2. 开启shutdown endpoint"></a>2. 开启<code>shutdown endpoint</code></h3><p>  <code>Spring Boot Actuator</code>的<code>shutdown endpoin</code>t默认是关闭的，因此在<code>application.properties</code>中开启<code>shutdown endpoint</code>：<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#启用shutdown</span></span><br><span class="line">endpoints.<span class="built_in">shutdown</span>.enabled=<span class="literal">true</span></span><br><span class="line"><span class="meta">#禁用密码验证</span></span><br><span class="line">endpoints.<span class="built_in">shutdown</span>.sensitive=<span class="literal">false</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="1-在pom-xml中引入actuator依赖"><a href="#1-在pom-xml中引入actuator依赖" class="headerlink" title="1. 在pom.xml中引入actuator依赖"></a>1. 在<code>pom.xml</code>中引入<code>actuator</code>依赖</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="2-开启shutdown-endpoint"><a href="#2-开启shutdown-endpoint" class="headerlink" title="2. 开启shutdown endpoint"></a>2. 开启<code>shutdown endpoint</code></h3><p>  <code>Spring Boot Actuator</code>的<code>shutdown endpoin</code>t默认是关闭的，因此在<code>application.properties</code>中开启<code>shutdown endpoint</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#启用shutdown</span><br><span class="line">endpoints.shutdown.enabled=true</span><br><span class="line">#禁用密码验证</span><br><span class="line">endpoints.shutdown.sensitive=false</span><br></pre></td></tr></table></figure></p>
 <h3 id="3-发送shutdown信号"><a href="#3-发送shutdown信号" class="headerlink" title="3. 发送shutdown信号"></a>3. 发送<code>shutdown</code>信号</h3><p>  <code>shutdown</code>的默认<code>url</code>为<code>host:port/shutdown</code>，当需要停止服务时，向服务器<code>post</code>该请求即可，如：<br><code>curl -X POST host:port/shutdown</code><br>将得到形如<code>{&quot;message&quot;:&quot;Shutting down, bye...&quot;}</code>的响应</p>
 <h3 id="4-安全设置"><a href="#4-安全设置" class="headerlink" title="4. 安全设置"></a>4. 安全设置</h3><p>可以看出，使用该方法可以非常方便的进行远程操作，但是需要注意的是，正式使用时，必须对该请求进行必要的安全设置，比如借助<code>spring-boot-starter-security</code>进行身份认证：</p>
 <ol>
 <li><p>pom.xml添加security依赖</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>开启安全验证<br>在<code>application.properties</code>中变更配置,并</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#开启shutdown的安全验证</span><br><span class="line">endpoints<span class="selector-class">.shutdown</span><span class="selector-class">.sensitive</span>=true</span><br><span class="line">#验证用户名</span><br><span class="line">security<span class="selector-class">.user</span><span class="selector-class">.name</span>=admin</span><br><span class="line">#验证密码</span><br><span class="line">security<span class="selector-class">.user</span><span class="selector-class">.password</span>=secret</span><br><span class="line">#角色</span><br><span class="line">management<span class="selector-class">.security</span><span class="selector-class">.role</span>=SUPERUSER</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#开启shutdown的安全验证</span><br><span class="line">endpoints.shutdown.sensitive=true</span><br><span class="line">#验证用户名</span><br><span class="line">security.user.name=admin</span><br><span class="line">#验证密码</span><br><span class="line">security.user.password=secret</span><br><span class="line">#角色</span><br><span class="line">management.security.role=SUPERUSER</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>指定路径、IP、端口</p>
-<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#指定shutdown endpoint的路径</span></span><br><span class="line">endpoints.shutdown.<span class="attr">path=/custompath</span></span><br><span class="line"><span class="comment">#也可以统一指定所有endpoints的路径`management.context-path=/manage`</span></span><br><span class="line"><span class="comment">#指定管理端口和IP</span></span><br><span class="line">management.<span class="attr">port=8081</span></span><br><span class="line">management.<span class="attr">address=127.0.0.1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#指定shutdown endpoint的路径</span><br><span class="line">endpoints.shutdown.path=/custompath</span><br><span class="line">#也可以统一指定所有endpoints的路径`management.context-path=/manage`</span><br><span class="line">#指定管理端口和IP</span><br><span class="line">management.port=8081</span><br><span class="line">management.address=127.0.0.1</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <h2 id="方式二：部署为Unix-Linux-Service"><a href="#方式二：部署为Unix-Linux-Service" class="headerlink" title="方式二：部署为Unix/Linux Service"></a>方式二：部署为Unix/Linux Service</h2><p>该方式主要借助官方的<code>spring-boot-maven-plugin</code>创建”Fully executable” jar ，这中jar包内置一个shell脚本，可以方便的将该应用设置为Unix/Linux的系统服务(init.d service),官方对该功能在CentOS和Ubuntu进行了测试，对于OS X和FreeBSD,可能需要自定义。具体步骤如下:</p>
-<h3 id="1-在pom-xml中引入插件："><a href="#1-在pom-xml中引入插件：" class="headerlink" title="1. 在pom.xml中引入插件："></a>1. 在<code>pom.xml</code>中引入插件：</h3>  <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">executable</span>&gt;</span>true<span class="tag">&lt;/<span class="name">executable</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-在pom-xml中引入插件："><a href="#1-在pom-xml中引入插件：" class="headerlink" title="1. 在pom.xml中引入插件："></a>1. 在<code>pom.xml</code>中引入插件：</h3>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">  &lt;configuration&gt;</span><br><span class="line">    &lt;executable&gt;true&lt;/executable&gt;</span><br><span class="line">  &lt;/configuration&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
 <h3 id="2-设置为系统服务"><a href="#2-设置为系统服务" class="headerlink" title="2. 设置为系统服务"></a>2. 设置为系统服务</h3><p>  将你的应用打成jar包，部署到服务器，假设部署路径为/var/app，包名为app.jar，通过如下方式将应该设置为一个系统服务：<br><code>sudo ln -s /var/app/app.jar /etc/init.d/app</code></p>
 <h3 id="3-赋予可执行权限："><a href="#3-赋予可执行权限：" class="headerlink" title="3. 赋予可执行权限："></a>3. 赋予可执行权限：</h3><p><code>chmod u+x app.jar</code></p>
 <h3 id="4-以系统服务的方式管理"><a href="#4-以系统服务的方式管理" class="headerlink" title="4. 以系统服务的方式管理"></a>4. 以系统服务的方式管理</h3><p>  接下来，就可以使用我们熟悉的service foo start|stop|restart来对应用进行启停等管理了<br><code>sudo service app start|stop</code><br>命令将得到形如<code>Started|Stopped [PID]</code>的结果反馈</p>
@@ -125,7 +177,7 @@ var _hmt = _hmt || [];
 <h3 id="自定义参数"><a href="#自定义参数" class="headerlink" title="自定义参数"></a>自定义参数</h3><p>在这种方式下，我们还可以使用自定义的.conf文件来变更默认配置，方法如下：</p>
 <ol>
 <li>在jar包相同路径下创建一个.conf文件，名称应该与.jar的名称相同，如appname.conf</li>
-<li>在其中配置相关变量，如：<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">JAVA_HOME</span>=/usr/local/jdk</span><br><span class="line"><span class="attr">JAVA_OPTS</span>=-Xmx1024M</span><br><span class="line"><span class="attr">LOG_FOLDER</span>=/custom/log</span><br></pre></td></tr></table></figure>
+<li>在其中配置相关变量，如：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JAVA_HOME=/usr/local/jdk</span><br><span class="line">JAVA_OPTS=-Xmx1024M</span><br><span class="line">LOG_FOLDER=/custom/log</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
 <h3 id="安全设置"><a href="#安全设置" class="headerlink" title="安全设置"></a>安全设置</h3><p>作为应用服务，安全性是一个不能忽略的问题，如下一些操作可以作为部分基础设置参考：</p>
@@ -141,65 +193,141 @@ var _hmt = _hmt || [];
 <li><a href="http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-monitoring.html#production-ready-sensitive-endpoints" target="_blank" rel="external">Securing sensitive endpoints</a></li>
 </ol>
 
-      
-    </div>
-    
-      <div class="article-toc">
-        <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-number">1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方式一：通过HTTP发送shutdown信号"><span class="toc-number">2.</span> <span class="toc-text">方式一：通过HTTP发送shutdown信号</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-在pom-xml中引入actuator依赖"><span class="toc-number">2.1.</span> <span class="toc-text">1. 在pom.xml中引入actuator依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-开启shutdown-endpoint"><span class="toc-number">2.2.</span> <span class="toc-text">2. 开启shutdown endpoint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-发送shutdown信号"><span class="toc-number">2.3.</span> <span class="toc-text">3. 发送shutdown信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-安全设置"><span class="toc-number">2.4.</span> <span class="toc-text">4. 安全设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方式二：部署为Unix-Linux-Service"><span class="toc-number">3.</span> <span class="toc-text">方式二：部署为Unix/Linux Service</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-在pom-xml中引入插件："><span class="toc-number">3.1.</span> <span class="toc-text">1. 在pom.xml中引入插件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-设置为系统服务"><span class="toc-number">3.2.</span> <span class="toc-text">2. 设置为系统服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-赋予可执行权限："><span class="toc-number">3.3.</span> <span class="toc-text">3. 赋予可执行权限：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-以系统服务的方式管理"><span class="toc-number">3.4.</span> <span class="toc-text">4. 以系统服务的方式管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义参数"><span class="toc-number">3.5.</span> <span class="toc-text">自定义参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安全设置"><span class="toc-number">3.6.</span> <span class="toc-text">安全设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-number">4.</span> <span class="toc-text">References:</span></a></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/微服务/">微服务</a></li></ul>
-
-      </footer>
     
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/07/05/JMeter性能测试3-0时代之-全新JMeter插件管理/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          JMeter性能测试3.0时代之-全新JMeter插件管理
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/06/21/FirstPost/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Welcome&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
 </article>
 
-</section>
-	</div>
-	    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2016 Luo&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+      </ul>
+
     </div>
   </div>
-</footer>
-	    
-
-<script src="/js/jquery.min.js"></script>
+</div>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+  <section class="duoshuo-comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="" data-title="正确、安全地停止SpringBoot应用" data-url="http://walbx.github.io/2016/06/27/正确、安全地SpringBoot应用/index.html"></div>
+    <!-- 多说评论框 end -->
+  </section>
 
 
-<script src="/js/script.js"></script>
+
+
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"aloo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+
+
   </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
 </body>
 </html>

@@ -1,107 +1,159 @@
 <!DOCTYPE html>
-<html>
+
+
+  <html class="light page-post">
+
+
 <head>
   <meta charset="utf-8">
   
-  <title>JMeter性能测试3.0时代之-全新JMeter插件管理 - Luo&#39;s</title>
+  <title>JMeter性能测试3.0时代之-全新JMeter插件管理 | Luo&#39;s Blog</title>
+
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="性能测试," />
+  
+
   <meta name="description" content="今年五月，老牌开源性能测试工具Apache JMeter迎来了自2011年11月成为Apache顶级项目以来的首次大版本更新–从2.13更新到3.0。这对于广大JMeter用户来说无疑是一个好消息，它让我们看到了这个项目的活力。也是因此，打算写一些自己感受到的JMeter近来的变化。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JMeter性能测试3.0时代之-全新JMeter插件管理">
 <meta property="og:url" content="http://walbx.github.io/2016/07/05/JMeter性能测试3-0时代之-全新JMeter插件管理/index.html">
-<meta property="og:site_name" content="Luo's">
+<meta property="og:site_name" content="Luo's Blog">
 <meta property="og:description" content="今年五月，老牌开源性能测试工具Apache JMeter迎来了自2011年11月成为Apache顶级项目以来的首次大版本更新–从2.13更新到3.0。这对于广大JMeter用户来说无疑是一个好消息，它让我们看到了这个项目的活力。也是因此，打算写一些自己感受到的JMeter近来的变化。">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1936843-ea3b7bb202cd0be5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1936843-4a2e153a94ed3a24.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1936843-13d80ced4b63dd3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2016-07-05T01:47:53.333Z">
+<meta property="og:updated_time" content="2016-07-12T02:24:07.972Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JMeter性能测试3.0时代之-全新JMeter插件管理">
 <meta name="twitter:description" content="今年五月，老牌开源性能测试工具Apache JMeter迎来了自2011年11月成为Apache顶级项目以来的首次大版本更新–从2.13更新到3.0。这对于广大JMeter用户来说无疑是一个好消息，它让我们看到了这个项目的活力。也是因此，打算写一些自己感受到的JMeter近来的变化。">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1936843-ea3b7bb202cd0be5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel='stylesheet' type='text/css'>
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-ga('create', 'UA-79979510-1', 'auto');
-ga('send', 'pageview');
+  
 
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "//hm.baidu.com/hm.js?cf39e851e71b5ad3a3c55f2aea6457b3";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-<!-- End Google Analytics -->
+  
+    <link rel="icon" href="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5scw4o8tnj206t06sdgf.jpg">
+  
 
+  <link href="/css/styles.css?v=028c63b1" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
 
 </head>
 
 <body>
-  <div id="container">
-  	<div id="wrap">
-	    <header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo logo-text" href="/">Luo&#39;s</a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/">首页</a>
-        
-          <a class="main-nav-link" href="/archives">档案</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-    </div>
-  </div>
-</header>
-	    <section id="main" class="outer"><article id="post-JMeter性能测试3-0时代之-全新JMeter插件管理" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+
+
   
-    <h1 class="article-title" itemprop="name">
-      JMeter性能测试3.0时代之-全新JMeter插件管理
-    </h1>
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
   
 
-      </header>
-    
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#JMeter"><span class="toc-text">JMeter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JMeter-Plugins"><span class="toc-text">JMeter Plugins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Plugins-Manager"><span class="toc-text">Plugins Manager</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-JMeter性能测试3-0时代之-全新JMeter插件管理" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">JMeter性能测试3.0时代之-全新JMeter插件管理</h1>
+
     <div class="article-meta">
-      <a href="/2016/07/05/JMeter性能测试3-0时代之-全新JMeter插件管理/" class="article-date">
-  <time datetime="2016-07-05T01:42:56.000Z" itemprop="datePublished">2016-07-05</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/我用/">我用</a>
-  </div>
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.07.05</span>
+      </span>
 
       
-    </div>
-    <div class="article-entry" itemprop="articleBody">
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Luo</span>
+        </span>
       
-        <p><img src="http://upload-images.jianshu.io/upload_images/1936843-ea3b7bb202cd0be5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/技能锻造室/">技能锻造室</a>
+  </span>
+
+
+
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p><img src="http://upload-images.jianshu.io/upload_images/1936843-ea3b7bb202cd0be5.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
 <blockquote>
 <p>今年五月，老牌开源性能测试工具<a href="http://jmeter.apache.org/" target="_blank" rel="external">Apache JMeter</a>迎来了自2011年11月成为Apache顶级项目以来的首次大版本更新–从2.13更新到3.0。<br>这对于广大JMeter用户来说无疑是一个好消息，它让我们看到了这个项目的活力。也是因此，打算写一些自己感受到的JMeter近来的变化。</p>
 </blockquote>
@@ -134,65 +186,141 @@ var _hmt = _hmt || [];
 <p>另外，Plugins Manager还提供了命令行安装的支持，具体参见<a href="http://jmeter-plugins.org/wiki/PluginsManager/" target="_blank" rel="external">官方wiki</a>，以便让在Linux上或者以NO-GUI方式在windows运行的使用者也能快捷的进行JMeter插件管理。</p>
 <p>最后，快快去体验一下吧 : )</p>
 
-      
-    </div>
-    
-      <div class="article-toc">
-        <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#JMeter"><span class="toc-number">1.</span> <span class="toc-text">JMeter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JMeter-Plugins"><span class="toc-number">2.</span> <span class="toc-text">JMeter Plugins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Plugins-Manager"><span class="toc-number">3.</span> <span class="toc-text">Plugins Manager</span></a></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/性能测试/">性能测试</a></li></ul>
-
-      </footer>
     
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2016/07/10/Dubbo高级特性实践-泛化调用/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          Dubbo高级特性实践-泛化调用
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2016/06/27/正确、安全地SpringBoot应用/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">正确、安全地停止SpringBoot应用&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
 </article>
 
-</section>
-	</div>
-	    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2016 Luo&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+      </ul>
+
     </div>
   </div>
-</footer>
-	    
-
-<script src="/js/jquery.min.js"></script>
+</div>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+  <section class="duoshuo-comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="" data-title="JMeter性能测试3.0时代之-全新JMeter插件管理" data-url="http://walbx.github.io/2016/07/05/JMeter性能测试3-0时代之-全新JMeter插件管理/index.html"></div>
+    <!-- 多说评论框 end -->
+  </section>
 
 
-<script src="/js/script.js"></script>
+
+
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"aloo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+
+
   </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
 </body>
 </html>
