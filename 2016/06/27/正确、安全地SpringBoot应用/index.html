@@ -12,7 +12,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="Spring Boot,微服务," />
+    <meta name="keywords" content="微服务,Spring Boot," />
   
 
   <meta name="description" content="基于官方特性的两种正确、安全地停止Spring Boot应用服务的方法">
@@ -22,7 +22,7 @@
 <meta property="og:site_name" content="Luo's Blog">
 <meta property="og:description" content="基于官方特性的两种正确、安全地停止Spring Boot应用服务的方法">
 <meta property="og:image" content="http://ww4.sinaimg.cn/large/9bd9d3e2gw1f5bxlcc3o9j20nz0b7t8t.jpg">
-<meta property="og:updated_time" content="2016-07-14T00:14:39.622Z">
+<meta property="og:updated_time" content="2016-07-14T03:20:14.510Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="正确、安全地停止SpringBoot应用">
 <meta name="twitter:description" content="基于官方特性的两种正确、安全地停止Spring Boot应用服务的方法">
@@ -136,7 +136,7 @@ ga('send', 'pageview');
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方式一：通过HTTP发送shutdown信号"><span class="toc-text">方式一：通过HTTP发送shutdown信号</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-在pom-xml中引入actuator依赖"><span class="toc-text">1. 在pom.xml中引入actuator依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-开启shutdown-endpoint"><span class="toc-text">2. 开启shutdown endpoint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-发送shutdown信号"><span class="toc-text">3. 发送shutdown信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-安全设置"><span class="toc-text">4. 安全设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方式二：部署为Unix-Linux-Service"><span class="toc-text">方式二：部署为Unix/Linux Service</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-在pom-xml中引入插件："><span class="toc-text">1. 在pom.xml中引入插件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-设置为系统服务"><span class="toc-text">2. 设置为系统服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-赋予可执行权限："><span class="toc-text">3. 赋予可执行权限：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-以系统服务的方式管理"><span class="toc-text">4. 以系统服务的方式管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义参数"><span class="toc-text">自定义参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安全设置"><span class="toc-text">安全设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References:</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方式一：通过HTTP发送shutdown信号"><span class="toc-text">方式一：通过HTTP发送shutdown信号</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-在pom-xml中引入actuator依赖"><span class="toc-text">1. 在pom.xml中引入actuator依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-开启shutdown-endpoint"><span class="toc-text">2. 开启shutdown endpoint</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-发送shutdown信号"><span class="toc-text">3. 发送shutdown信号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-安全设置"><span class="toc-text">4. 安全设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方式二：部署为Unix-Linux-Service"><span class="toc-text">方式二：部署为Unix/Linux Service</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-在pom-xml中引入插件："><span class="toc-text">1. 在pom.xml中引入插件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-设置为系统服务"><span class="toc-text">2. 设置为系统服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-赋予可执行权限："><span class="toc-text">3. 赋予可执行权限：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-以系统服务的方式管理"><span class="toc-text">4. 以系统服务的方式管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义参数"><span class="toc-text">自定义参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安全设置"><span class="toc-text">安全设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li></ol>
   </div>
 
 
@@ -213,7 +213,7 @@ ga('send', 'pageview');
 <li>阻止修改：<code>sudo chattr +i app.jar</code></li>
 <li>对.conf文件做类似的工作：<code>chmod 400 app.conf</code>,<code>sudo chown root:root app.conf</code></li>
 </ul>
-<h2 id="References"><a href="#References" class="headerlink" title="References:"></a>References:</h2><ol>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
 <li><a href="http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html" target="_blank" rel="external">Installing Spring Boot applications</a></li>
 <li><a href="http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-enabling.html" target="_blank" rel="external">Endpoints</a></li>
 <li><a href="http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-monitoring.html#production-ready-sensitive-endpoints" target="_blank" rel="external">Securing sensitive endpoints</a></li>

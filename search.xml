@@ -127,7 +127,7 @@
 <li>阻止修改：<code>sudo chattr +i app.jar</code></li>
 <li>对.conf文件做类似的工作：<code>chmod 400 app.conf</code>,<code>sudo chown root:root app.conf</code></li>
 </ul>
-<h2 id="References"><a href="#References" class="headerlink" title="References:"></a>References:</h2><ol>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
 <li><a href="http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html" target="_blank" rel="external">Installing Spring Boot applications</a></li>
 <li><a href="http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-enabling.html" target="_blank" rel="external">Endpoints</a></li>
 <li><a href="http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-monitoring.html#production-ready-sensitive-endpoints" target="_blank" rel="external">Securing sensitive endpoints</a></li>
