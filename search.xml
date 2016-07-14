@@ -70,11 +70,11 @@
 <li>将下载的文件拷贝的你的JMeter根目录下的<code>lib/ext</code>目录</li>
 <li>启动JMeter，点击<code>菜单栏</code>-<code>Options</code>-<code>Plugins Manager</code>,如<code>图1</code>：</li>
 </ol>
-<p><img src="http://ww1.sinaimg.cn/large/9bd9d3e2gw1f5otxp1yk8j20c908675n.jpg" alt="图 1"></p>
+<p><img src="http://ww1.sinaimg.cn/large/9bd9d3e2gw1f5otxp1yk8j20c908675n.jpg" alt="图1"></p>
 <ol>
 <li>在如<code>图2</code>的管理页面进行插件管理，共有三个标签页:</li>
 </ol>
-<p><img src="http://ww2.sinaimg.cn/large/9bd9d3e2gw1f5otxpd97mj20hr07qjtn.jpg" alt="图 2"></p>
+<p><img src="http://ww2.sinaimg.cn/large/9bd9d3e2gw1f5otxpd97mj20hr07qjtn.jpg" alt="图2"></p>
 <ul>
 <li>Installed Plugins：顾名思义，是用于查看已安装的插件，并可通过<code>取消勾选</code>-<code>应用操作</code>来卸载插件</li>
 <li>Available Plugins:用于查看和安装可用的插件</li>
@@ -88,7 +88,7 @@
     <entry>
       <title><![CDATA[正确、安全地停止SpringBoot应用]]></title>
       <url>http://walbx.github.io/2016/06/27/%E6%AD%A3%E7%A1%AE%E3%80%81%E5%AE%89%E5%85%A8%E5%9C%B0SpringBoot%E5%BA%94%E7%94%A8/</url>
-      <content type="html"><![CDATA[<p><img src="http://http://ww4.sinaimg.cn/large/9bd9d3e2gw1f5bxlcc3o9j20nz0b7t8t.jpg" alt=""></p>
+      <content type="html"><![CDATA[<p><img src="http://ww4.sinaimg.cn/large/9bd9d3e2gw1f5bxlcc3o9j20nz0b7t8t.jpg" alt=""></p>
 <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><a href="http://projects.spring.io/spring-boot/" target="_blank" rel="external">Spring Boot</a>，作为Spring框架对“约定优先于配置(Convention Over Configuration)”理念的最佳实践的产物，它能帮助我们很快捷的创建出独立运行、产品级别的基于Spring框架的应用，大部分Spring Boot应用只需要非常少的配置就可以快速运行起来，是一个与微服务(MicroServices)相当契合的微框架。<br>网络上关于Spring Boot的QuickStart式中文内容已经相当丰富，但是对于部署后怎样便捷、安全地停止服务(shutdown)，还比较缺乏，最近发现Spring Boot的官方指南更新了相关内容，因此结合该部分更新，对如何<strong>基于官方提供的特性</strong>正确地停止Spring Boot应用进行简单说明。</p>
 <p>主要有两种方式：通过<code>HTTP</code>发送<code>shutdown</code>信号，或者通过<code>service stop</code>的方式<br><a id="more"></a></p>
 <h2 id="方式一：通过HTTP发送shutdown信号"><a href="#方式一：通过HTTP发送shutdown信号" class="headerlink" title="方式一：通过HTTP发送shutdown信号"></a>方式一：通过<code>HTTP</code>发送<code>shutdown</code>信号</h2><p>该方式主要依赖<code>Spring Boot Actuator</code>的<code>endpoint</code>特性，具体步骤如下：</p>
