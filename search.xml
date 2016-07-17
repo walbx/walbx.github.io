@@ -7,13 +7,14 @@
       <title><![CDATA[JMeter性能测试3.0时代之-多维度的图形化HTML报告]]></title>
       <url>http://walbx.github.io/2016/07/17/JMeter%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%953-0%E6%97%B6%E4%BB%A3%E4%B9%8B-%E5%A4%9A%E7%BB%B4%E5%BA%A6%E7%9A%84%E5%9B%BE%E5%BD%A2%E5%8C%96HTML%E6%8A%A5%E5%91%8A/</url>
       <content type="html"><![CDATA[<blockquote>
-<p>在上一篇博客<a href="http://www.jianshu.com/p/31776d20c22c" target="_blank" rel="external">JMeter性能测试3.0时代之-全新JMeter插件管理</a>中我说会写真正的JMeter 3.0新特性，时隔两周，总算在这个周末，暂停其他安排，来继续这个未完成的系列。<br>本文主要介绍JMeter3.0引入的新特性：<a href="https://jmeter.apache.org/usermanual/generating-dashboard.html" target="_blank" rel="external">Dashboard Report</a>，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的经历放在后端的平台功能而不是去临时学习前端图表库。<br><a id="more"></a></p>
+<p>在上一篇博客<a href="http://www.jianshu.com/p/31776d20c22c" target="_blank" rel="external">JMeter性能测试3.0时代之-全新JMeter插件管理</a>中我说会写真正的JMeter 3.0新特性，时隔两周，总算在这个周末，暂停其他安排，来继续这个未完成的系列。<br>本文主要介绍JMeter3.0引入的新特性：<a href="https://jmeter.apache.org/usermanual/generating-dashboard.html" target="_blank" rel="external">Dashboard Report</a>，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的经历放在后端的平台功能而不是去临时学习前端图表库。</p>
+</blockquote>
+<a id="more"></a>
 <h2 id="一-为什么谈这个新特性"><a href="#一-为什么谈这个新特性" class="headerlink" title="一.为什么谈这个新特性"></a>一.为什么谈这个新特性</h2><p>在JMeter3.0之前，官方只提供在工具的UI上对测试结果部分维度的图形化展示，这对我带来了两方面的困扰：</p>
 <ol>
 <li>在实际使用中，在平台中集成JMeter后需要页面展示TPS曲线，平均响应时间曲线等图表时，需要我们手动操刀摆弄如Hightcharts/Echarts等前端图表库。</li>
 <li>要查看历史的测试结果，需要启动JMeter的图形化界面，导入保存的CSV结果，过程繁琐，并且当结果集较大时，JMeter需要耗费相当多的时间在界面上展示图形化报告。</li>
 </ol>
-</blockquote>
 <p>本文讨论的新特性为这两个问题带来了较好的解决办法：</p>
 <ul>
 <li>新特性良好的实现了结果数据可视化，生成的报告是HTML页面形式，并且包含大多数实际测试中关心的度量维度的，可以便捷地嵌入到平台，从浏览器来查看每次测试运行的。</li>
