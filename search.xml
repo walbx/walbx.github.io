@@ -23,7 +23,10 @@
 <h2 id="二-新特性简介"><a href="#二-新特性简介" class="headerlink" title="二.新特性简介"></a>二.新特性简介</h2><p>JMeter3.0提供一个用于生成<strong>HTML页面格式图形化报告</strong>的扩展模块。该模块支持通过两种方式生成多维度图形化测试报告：</p>
 <ol>
 <li>在JMeter性能测试结束时，自动生成本次测试的HTML图形化报告</li>
-<li>使用一个已有的结果文件(如CSV文件)来生成该次结果的HTML图形化报告<br><strong>其默认提供的度量维度包括：</strong><ol>
+<li>使用一个已有的结果文件(如CSV文件)来生成该次结果的HTML图形化报告</li>
+</ol>
+<p><strong>其默认提供的度量维度包括：</strong></p>
+<ol>
 <li>APDEX(Application Performance Index)指数</li>
 <li>聚合报告<ul>
 <li>类似于UI上的<em>Aggregate Report</em></li>
@@ -88,8 +91,6 @@
 </ul>
 </li>
 </ol>
-</li>
-</ol>
 <p><em>注1：Latency time没有翻译成中文，这里对其计算方式做注解：</em><br>    <em>Latency time = 接收到响应的第一个字节的时间点 - 请求开始发送的时间点</em></p>
 <blockquote>
 <p> <em>from just before sending the request to just after the first response has been received</em><br>– <a href="http://jmeter.apache.org/usermanual/glossary.html" target="_blank" rel="external">Apache JMeter Glossary</a></p>
@@ -126,21 +127,19 @@
 <p>两个样例都会在\apache-jmeter-3.0\bin\output目录下产生如下文件(夹):<br><img src="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x043a8xuj20if03vdgd.jpg" alt=""></p>
 <p>用浏览器打开index.html文件，即可查看各种图形化报告:<br><img src="http://ww4.sinaimg.cn/large/9bd9d3e2gw1f5x04glvcqj20ki0cm3zr.jpg" alt=""><br><img src="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x0ao5dkjj212u0fqjvr.jpg" alt=""></p>
 <h2 id="四-自定义配置"><a href="#四-自定义配置" class="headerlink" title="四.自定义配置"></a>四.自定义配置</h2><p>JMeter3.0在bin目录新增了<code>reportgenerator.properties</code>文件保存了所有关于图形化HTML报告生成模块的默认配置，要变更配置，建议不要直接编辑该文件，而是推荐在<code>user.properties</code>中去配置和覆盖。</p>
-<h3 id="1-总体配置"><a href="#1-总体配置" class="headerlink" title="1.总体配置"></a>1.总体配置</h3><blockquote>
-<p>总体配置都是以<code>jmeter.reportgenerator.</code>为前缀</p>
-</blockquote>
+<h3 id="1-总体配置"><a href="#1-总体配置" class="headerlink" title="1.总体配置"></a>1.总体配置</h3><p>总体配置都是以<code>jmeter.reportgenerator.</code>为前缀。如：jmeter.reportgenerator.overall_granularity=60000</p>
 <ul>
-<li><p>overall_granularity：定义采样点粒度，默认为60000ms，通常在稳定性以外的测试中，我们可能需要定义更细的粒度，比如1000ms，我们可以在<code>user.properties</code>文件末尾添加如下配置：</p>
+<li><p><code>overall_granularity</code>：定义采样点粒度，默认为60000ms，通常在稳定性以外的测试中，我们可能需要定义更细的粒度，比如1000ms，我们可以在<code>user.properties</code>文件末尾添加如下配置：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Change this parameter if you want to change the granularity of over time graphs.</span><br><span class="line">jmeter.reportgenerator.overall_granularity=6000</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>report_title:定义报告的标题，我们可能需要将标题定义为实际测试项名称</p>
+<li><p><code>report_title</code>:定义报告的标题，我们可能需要将标题定义为实际测试项名称</p>
 </li>
-<li>apdex_satisfied_threshold：定义Apdex评估中<strong>满意</strong>的阈值(单位ms)</li>
-<li>apdex_tolerated_threshold: 定义Apdex评估中<strong>可容忍</strong>的阈值<br><code>Apdext = (Satisfied Count + Tolerating Count / 2) / Total Samples</code></li>
+<li><code>apdex_satisfied_threshold</code>：定义Apdex评估中<strong>满意</strong>的阈值(单位ms)</li>
+<li><code>apdex_tolerated_threshold</code>: 定义Apdex评估中<strong>可容忍</strong>的阈值<br><code>Apdext = (Satisfied Count + Tolerating Count / 2) / Total Samples</code></li>
 </ul>
 <p>另外，在<code>jmeter.properties</code>中，有关于集合报告中的三个百分位的默认值：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">aggregate_rpt_pct1 : Defaults to 90</span><br><span class="line">aggregate_rpt_pct2 : Defaults to 95</span><br><span class="line">aggregate_rpt_pct3 : Defaults to 99</span><br></pre></td></tr></table></figure></p>
-<p>可以在user.properties中对其进行覆盖，如：<code>aggregate_rpt_pct1 = 70</code>，效果如下：<br><img src="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x04h6f3dj20bl06cq3b.jpg" alt=""></p>
-<h3 id="2-图表配置"><a href="#2-图表配置" class="headerlink" title="2.图表配置"></a>2.图表配置</h3><p>每个图表配置都是以<code>jmeter.reportgenerator.graph.&lt;图表名称&gt;.</code>为前缀，如<code>jmeter.reportgenerator.graph.responseTimesOverTime.title=Response Time Over Time</code></p>
+<p>可以在<code>user.properties</code>中对其进行覆盖，如：<code>aggregate_rpt_pct1 = 70</code>，效果如下：<br><img src="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x04h6f3dj20bl06cq3b.jpg" alt=""></p>
+<h3 id="2-图表配置"><a href="#2-图表配置" class="headerlink" title="2.图表配置"></a>2.图表配置</h3><p>每个图表配置都是以<code>jmeter.reportgenerator.graph.&lt;图表名称&gt;.</code>为前缀。</p>
 <ul>
 <li><code>classname</code> 图表的实现类，如果有自己定制的实现，将该配置的值写为自定义实现类的类名</li>
 <li><code>title</code> 图标标题，比如要汉化的时候，在这里配置中文标题</li>
@@ -148,8 +147,8 @@
 </ul>
 <h3 id="3-输出配置"><a href="#3-输出配置" class="headerlink" title="3.输出配置"></a>3.输出配置</h3><p>输出配置都以<code>jmeter.reportgenerator.exporter</code>为前缀。</p>
 <ul>
-<li>property.output_dir 配置默认的报告输出路径。在命令行可以用-o选项来设置特定的路径覆盖该配置。</li>
-<li>html.series_filter 用于过滤展示内容。如在user.properties添加如下配置：<br><code>jmeter.reportgenerator.exporter.html.series_filter=(^Login)(-success|-failure)?</code><br>则最后的报告只展示名为Login这个取样器的数据。该配置包含两部分，<code>(-success|-failure)?</code>是<code>Transactions per second</code>图表所依赖的配置。前面部分接受一个正则表达式用来过滤。</li>
+<li><code>property.output_dir</code> 配置默认的报告输出路径。在命令行可以用-o选项来设置特定的路径覆盖该配置。</li>
+<li><code>html.series_filter</code> 用于过滤展示内容。如在user.properties添加如下配置：<br><code>jmeter.reportgenerator.exporter.html.series_filter=(^Login)(-success|-failure)?</code><br>则最后的报告只展示名为Login这个取样器的数据。该配置包含两部分，<code>(-success|-failure)?</code>是<code>Transactions per second</code>图表所依赖的配置。前面部分接受一个正则表达式用来过滤。</li>
 </ul>
 <h2 id="五-总结"><a href="#五-总结" class="headerlink" title="五.总结"></a>五.总结</h2><p>本次介绍的<code>Dashboard Report</code>特性本质上是Apache JMeter对于测试结果数据可视化方式的顺应时代的更新，虽然算是姗姗来迟，虽然并不酷炫，但至少，对于要需要基于它来执行性能测试的人来说，仍然是一个福音。最后，感谢Apache JMeter项目的各位贡献者对它的持续更新。</p>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
