@@ -94,8 +94,8 @@
 <blockquote>
 <p> <em>from just before sending the request to just after the first response has been received</em><br>– <a href="http://jmeter.apache.org/usermanual/glossary.html" target="_blank" rel="external">Apache JMeter Glossary</a></p>
 </blockquote>
-<pre><code>*响应时间(JMeter术语中的Elapsed time) = 接收完所有响应内容的时间点 - 请求开始发送的时间点*
-</code></pre><blockquote>
+<p>  <em>响应时间(JMeter术语中的Elapsed time) = 接收完所有响应内容的时间点 - 请求开始发送的时间点</em></p>
+<blockquote>
 <p><em>from just before sending the request to just after the last response has been received</em><br>– <a href="http://jmeter.apache.org/usermanual/glossary.html" target="_blank" rel="external">Apache JMeter Glossary</a></p>
 </blockquote>
 <p><em>注2：Apdex 标准从用户的角度出发，将对应用响应时间的表现，转为用户对于应用性能的可量化为范围为 0-1 的满意度评价。。</em></p>
