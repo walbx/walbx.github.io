@@ -90,12 +90,11 @@
 </ol>
 </li>
 </ol>
-<p><em>注1：Latency time没有翻译成中文，这里对其计算方式做注解：</em></p>
-<pre><code>- Latency time = 接收到响应的第一个字节的时间点 - 请求开始发送的时间点 
-</code></pre><blockquote>
+<p><em>注1：Latency time没有翻译成中文，这里对其计算方式做注解：</em><br>    <em>Latency time = 接收到响应的第一个字节的时间点 - 请求开始发送的时间点</em></p>
+<blockquote>
 <p> <em>from just before sending the request to just after the first response has been received</em><br>– <a href="http://jmeter.apache.org/usermanual/glossary.html" target="_blank" rel="external">Apache JMeter Glossary</a></p>
 </blockquote>
-<pre><code>- 响应时间(JMeter术语中的Elapsed time) = 接收完所有响应内容的时间点 - 请求开始发送的时间点
+<pre><code>*响应时间(JMeter术语中的Elapsed time) = 接收完所有响应内容的时间点 - 请求开始发送的时间点*
 </code></pre><blockquote>
 <p><em>from just before sending the request to just after the last response has been received</em><br>– <a href="http://jmeter.apache.org/usermanual/glossary.html" target="_blank" rel="external">Apache JMeter Glossary</a></p>
 </blockquote>

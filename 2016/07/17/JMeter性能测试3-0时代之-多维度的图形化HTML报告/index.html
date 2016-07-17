@@ -25,7 +25,7 @@
 <meta property="og:image" content="http://ww4.sinaimg.cn/large/9bd9d3e2gw1f5x04glvcqj20ki0cm3zr.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x0ao5dkjj212u0fqjvr.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x04h6f3dj20bl06cq3b.jpg">
-<meta property="og:updated_time" content="2016-07-17T09:09:12.740Z">
+<meta property="og:updated_time" content="2016-07-17T09:14:13.821Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JMeter性能测试3.0时代之-多维度的图形化HTML报告">
 <meta name="twitter:description" content="在上一篇博客JMeter性能测试3.0时代之-全新JMeter插件管理中我说会写真正的JMeter 3.0新特性，时隔两周，总算在这个周末，暂停其他安排，来继续这个未完成的系列。本文主要介绍JMeter3.0引入的新特性：Dashboard Report，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的经历">
@@ -261,12 +261,11 @@ ga('send', 'pageview');
 </ol>
 </li>
 </ol>
-<p><em>注1：Latency time没有翻译成中文，这里对其计算方式做注解：</em></p>
-<pre><code>- Latency time = 接收到响应的第一个字节的时间点 - 请求开始发送的时间点 
-</code></pre><blockquote>
+<p><em>注1：Latency time没有翻译成中文，这里对其计算方式做注解：</em><br>    <em>Latency time = 接收到响应的第一个字节的时间点 - 请求开始发送的时间点</em></p>
+<blockquote>
 <p> <em>from just before sending the request to just after the first response has been received</em><br>– <a href="http://jmeter.apache.org/usermanual/glossary.html" target="_blank" rel="external">Apache JMeter Glossary</a></p>
 </blockquote>
-<pre><code>- 响应时间(JMeter术语中的Elapsed time) = 接收完所有响应内容的时间点 - 请求开始发送的时间点
+<pre><code>*响应时间(JMeter术语中的Elapsed time) = 接收完所有响应内容的时间点 - 请求开始发送的时间点*
 </code></pre><blockquote>
 <p><em>from just before sending the request to just after the last response has been received</em><br>– <a href="http://jmeter.apache.org/usermanual/glossary.html" target="_blank" rel="external">Apache JMeter Glossary</a></p>
 </blockquote>
