@@ -12,24 +12,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="性能测试," />
+    <meta name="keywords" content="性能测试,JMeter," />
   
 
-  <meta name="description" content="在上一篇博客JMeter性能测试3.0时代之-全新JMeter插件管理中我说会写真正的JMeter 3.0新特性，时隔两周，总算在这个周末，暂停其他安排，来继续这个未完成的系列。本文主要介绍JMeter3.0引入的新特性：Dashboard Report，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的经">
+  <meta name="description" content="本文主要介绍JMeter3.0引入的新特性：Dashboard Report，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的精力放在后端的平台功能而不是去临时学习前端图表库。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JMeter性能测试3.0时代之-多维度的图形化HTML报告">
 <meta property="og:url" content="http://walbx.github.io/2016/07/17/JMeter性能测试3-0时代之-多维度的图形化HTML报告/index.html">
 <meta property="og:site_name" content="Luo's Blog">
-<meta property="og:description" content="在上一篇博客JMeter性能测试3.0时代之-全新JMeter插件管理中我说会写真正的JMeter 3.0新特性，时隔两周，总算在这个周末，暂停其他安排，来继续这个未完成的系列。本文主要介绍JMeter3.0引入的新特性：Dashboard Report，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的经">
+<meta property="og:description" content="本文主要介绍JMeter3.0引入的新特性：Dashboard Report，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的精力放在后端的平台功能而不是去临时学习前端图表库。">
 <meta property="og:image" content="http://ww2.sinaimg.cn/large/9bd9d3e2gw1f5x232chyaj20b5096q3q.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x043a8xuj20if03vdgd.jpg">
 <meta property="og:image" content="http://ww4.sinaimg.cn/large/9bd9d3e2gw1f5x04glvcqj20ki0cm3zr.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x0ao5dkjj212u0fqjvr.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x04h6f3dj20bl06cq3b.jpg">
-<meta property="og:updated_time" content="2016-07-17T10:03:01.434Z">
+<meta property="og:updated_time" content="2016-07-18T13:09:02.613Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JMeter性能测试3.0时代之-多维度的图形化HTML报告">
-<meta name="twitter:description" content="在上一篇博客JMeter性能测试3.0时代之-全新JMeter插件管理中我说会写真正的JMeter 3.0新特性，时隔两周，总算在这个周末，暂停其他安排，来继续这个未完成的系列。本文主要介绍JMeter3.0引入的新特性：Dashboard Report，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的经">
+<meta name="twitter:description" content="本文主要介绍JMeter3.0引入的新特性：Dashboard Report，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的精力放在后端的平台功能而不是去临时学习前端图表库。">
 <meta name="twitter:image" content="http://ww2.sinaimg.cn/large/9bd9d3e2gw1f5x232chyaj20b5096q3q.jpg">
 
   
@@ -180,7 +180,7 @@ ga('send', 'pageview');
     
       <p><img src="http://ww2.sinaimg.cn/large/9bd9d3e2gw1f5x232chyaj20b5096q3q.jpg" alt=""></p>
 <blockquote>
-<p>在上一篇博客<a href="http://www.jianshu.com/p/31776d20c22c" target="_blank" rel="external">JMeter性能测试3.0时代之-全新JMeter插件管理</a>中我说会写真正的JMeter 3.0新特性，时隔两周，总算在这个周末，暂停其他安排，来继续这个未完成的系列。<br>本文主要介绍JMeter3.0引入的新特性：<a href="https://jmeter.apache.org/usermanual/generating-dashboard.html" target="_blank" rel="external">Dashboard Report</a>，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的经历放在后端的平台功能而不是去临时学习前端图表库。</p>
+<p>在上一篇博客<a href="http://www.aloo.me/2016/07/05/JMeter%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%953-0%E6%97%B6%E4%BB%A3%E4%B9%8B-%E5%85%A8%E6%96%B0JMeter%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86/" target="_blank" rel="external">JMeter性能测试3.0时代之-全新JMeter插件管理</a>中我说会写真正的JMeter 3.0新特性，时隔两周，总算在这个周末，暂停其他安排，来继续这个未完成的系列。<br>本文主要介绍JMeter3.0引入的新特性：<a href="https://jmeter.apache.org/usermanual/generating-dashboard.html" target="_blank" rel="external">Dashboard Report</a>，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的精力放在后端的平台功能而不是去临时学习前端图表库。</p>
 </blockquote>
 <a id="more"></a>
 <h2 id="一-为什么谈这个新特性"><a href="#一-为什么谈这个新特性" class="headerlink" title="一.为什么谈这个新特性"></a>一.为什么谈这个新特性</h2><p>在JMeter3.0之前，官方只提供在工具的UI上对测试结果部分维度的图形化展示，这对我带来了两方面的困扰：</p>
