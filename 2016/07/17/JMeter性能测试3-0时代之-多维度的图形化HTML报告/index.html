@@ -72,6 +72,7 @@ ga('send', 'pageview');
   </script>
 
 
+  <link href="http://cdn.staticfile.org/highlight.js/9.0.0/styles/tomorrow.min.css" rel="stylesheet">  
 </head>
 
 <body>
@@ -277,11 +278,23 @@ ga('send', 'pageview');
 <p><strong>Apdex (Application Performance Index)</strong> is an open standard developed by an alliance of companies. It defines a standard method for reporting and comparing the performance of software applications in computing.<br>– <a href="https://en.wikipedia.org/wiki/Apdex" target="_blank" rel="external">wikipedia</a></p>
 </blockquote>
 <h2 id="三-快速入门"><a href="#三-快速入门" class="headerlink" title="三.快速入门"></a>三.快速入门</h2><h3 id="1-确认基本配置"><a href="#1-确认基本配置" class="headerlink" title="1.确认基本配置"></a>1.确认基本配置</h3><ul>
-<li><p>在jmeter.properties或者user.properties确认如下配置项：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">jmeter.save.saveservice.bytes = true</span><br><span class="line">jmeter.save.saveservice.label = true</span><br><span class="line">jmeter.save.saveservice.latency = true</span><br><span class="line">jmeter.save.saveservice.response_code = true</span><br><span class="line">jmeter.save.saveservice.response_message = true</span><br><span class="line">jmeter.save.saveservice.successful = true</span><br><span class="line">jmeter.save.saveservice.thread_counts = true</span><br><span class="line">jmeter.save.saveservice.thread_name = true</span><br><span class="line">jmeter.save.saveservice.time = true</span><br><span class="line"># the timestamp format must include the time and should include the date.</span><br><span class="line"># For example the default, which is milliseconds since the epoch: </span><br><span class="line">jmeter.save.saveservice.timestamp_format = ms</span><br><span class="line"># Or the following would also be suitable</span><br><span class="line">jmeter.save.saveservice.timestamp_format = yyyy/MM/dd HH:mm:ss</span><br></pre></td></tr></table></figure>
+<li>在jmeter.properties或者user.properties确认如下配置项：<pre><code class="xml">jmeter.save.saveservice.bytes = true
+jmeter.save.saveservice.label = true
+jmeter.save.saveservice.latency = true
+jmeter.save.saveservice.response_code = true
+jmeter.save.saveservice.response_message = true
+jmeter.save.saveservice.successful = true
+jmeter.save.saveservice.thread_counts = true
+jmeter.save.saveservice.thread_name = true
+jmeter.save.saveservice.time = true
+# the timestamp format must include the time and should include the date.
+# For example the default, which is milliseconds since the epoch: 
+jmeter.save.saveservice.timestamp_format = ms
+# Or the following would also be suitable
+jmeter.save.saveservice.timestamp_format = yyyy/MM/dd HH:mm:ss
+</code></pre>
 </li>
-<li><p>如果希望在Errors报告中展示更详细数据，需要确保如下配置</p>
-<ul>
+<li>如果希望在Errors报告中展示更详细数据，需要确保如下配置<ul>
 <li><code>jmeter.save.saveservice.assertion_results_failure_message = true</code></li>
 <li>如果使用了事务控制器(Transaction Controller)，确认<em>Generate parent sample</em>为未勾选状态</li>
 </ul>
@@ -302,15 +315,19 @@ ga('send', 'pageview');
 <h2 id="四-自定义配置"><a href="#四-自定义配置" class="headerlink" title="四.自定义配置"></a>四.自定义配置</h2><p>JMeter3.0在bin目录新增了<code>reportgenerator.properties</code>文件保存了所有关于图形化HTML报告生成模块的默认配置，要变更配置，建议不要直接编辑该文件，而是推荐在<code>user.properties</code>中去配置和覆盖。</p>
 <h3 id="1-总体配置"><a href="#1-总体配置" class="headerlink" title="1.总体配置"></a>1.总体配置</h3><p>总体配置都是以<code>jmeter.reportgenerator.</code>为前缀。如：jmeter.reportgenerator.overall_granularity=60000</p>
 <ul>
-<li><p><code>overall_granularity</code>：定义采样点粒度，默认为60000ms，通常在稳定性以外的测试中，我们可能需要定义更细的粒度，比如1000ms，我们可以在<code>user.properties</code>文件末尾添加如下配置：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Change this parameter if you want to change the granularity of over time graphs.</span><br><span class="line">jmeter.reportgenerator.overall_granularity=6000</span><br></pre></td></tr></table></figure>
+<li><code>overall_granularity</code>：定义采样点粒度，默认为60000ms，通常在稳定性以外的测试中，我们可能需要定义更细的粒度，比如1000ms，我们可以在<code>user.properties</code>文件末尾添加如下配置：<pre><code class="xml"># Change this parameter if you want to change the granularity of over time graphs.
+jmeter.reportgenerator.overall_granularity=6000
+</code></pre>
 </li>
-<li><p><code>report_title</code>:定义报告的标题，我们可能需要将标题定义为实际测试项名称</p>
-</li>
+<li><code>report_title</code>:定义报告的标题，我们可能需要将标题定义为实际测试项名称</li>
 <li><code>apdex_satisfied_threshold</code>：定义Apdex评估中<strong>满意</strong>的阈值(单位ms)</li>
 <li><code>apdex_tolerated_threshold</code>: 定义Apdex评估中<strong>可容忍</strong>的阈值<br><code>Apdext = (Satisfied Count + Tolerating Count / 2) / Total Samples</code></li>
 </ul>
-<p>另外，在<code>jmeter.properties</code>中，有关于集合报告中的三个百分位的默认值：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">aggregate_rpt_pct1 : Defaults to 90</span><br><span class="line">aggregate_rpt_pct2 : Defaults to 95</span><br><span class="line">aggregate_rpt_pct3 : Defaults to 99</span><br></pre></td></tr></table></figure></p>
+<p>另外，在<code>jmeter.properties</code>中，有关于集合报告中的三个百分位的默认值：</p>
+<pre><code class="xml">aggregate_rpt_pct1 : Defaults to 90
+aggregate_rpt_pct2 : Defaults to 95
+aggregate_rpt_pct3 : Defaults to 99
+</code></pre>
 <p>可以在<code>user.properties</code>中对其进行覆盖，如：<code>aggregate_rpt_pct1 = 70</code>，效果如下：<br><img src="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x04h6f3dj20bl06cq3b.jpg" alt=""></p>
 <h3 id="2-图表配置"><a href="#2-图表配置" class="headerlink" title="2.图表配置"></a>2.图表配置</h3><p>每个图表配置都是以<code>jmeter.reportgenerator.graph.&lt;图表名称&gt;.</code>为前缀。</p>
 <ul>
@@ -465,5 +482,7 @@ ga('send', 'pageview');
   }
 </script>
 
+  <script src="http://cdn.staticfile.org/highlight.js/9.0.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>

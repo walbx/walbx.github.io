@@ -32,7 +32,23 @@
 <li><strong>单元格(cell)：</strong>存储的每一个值存放在一个单元格中，由<strong><em>[行，列，版本号]</em></strong>来唯一指向一个单元格。图1中彩色标识的矩形块即可看作是一个单元格</li>
 <li><strong>版本(version)：</strong>版本号默认是时间戳形式，同一列中可能包含若干单元格，这些单元格由版本号唯一区分，<strong>根据版本号降序排列</strong>，HBase查询时，如果不指定版本号，默认返回最新的值。图1中的t3,t6等即代表版本号。<strong>版本是HBase多维特性的表现</strong>。</li>
 </ul>
-<p>Google论文中Bigtable描述为一个map，那么从Map的维度，用JSON格式，HBase的结构可以理解为：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  // ...</span><br><span class="line">  "row1" : &#123;</span><br><span class="line">    "family1" : &#123;</span><br><span class="line">      "column1" : &#123;</span><br><span class="line">        111 : "value1",</span><br><span class="line">        123 : "value2"</span><br><span class="line">        &#125;,</span><br><span class="line">      "column2" : &#123;103 : "value3"&#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    "family2" : &#123; ... &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  "row2" : &#123;</span><br><span class="line">    "family3" : &#123; ... &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Google论文中Bigtable描述为一个map，那么从Map的维度，用JSON格式，HBase的结构可以理解为：</p>
+<pre><code class="Json">{
+  &quot;row1&quot; : {
+    &quot;family1&quot; : {
+      &quot;column1&quot; : {
+        111 : &quot;value1&quot;,
+        123 : &quot;value2&quot;
+        },
+      &quot;column2&quot; : {103 : &quot;value3&quot;}
+    },
+    &quot;family2&quot; : { ... }
+  },
+  &quot;row2&quot; : {
+    &quot;family3&quot; : { ... }
+  },
+}
+</code></pre>
 <p>而关于其<em>稀疏</em>这一特性，可以用下图来辅助理解：</p>
 <p><img src="http://ww2.sinaimg.cn/mw690/9bd9d3e2gw1f64pb0bqxcj20rr0poadb.jpg" alt="图2 HBase的行和列所构成的更像标签，而不是表格"></p>
 <p><div align="center" style="color:#808080;font-size:12px"><em>图2 HBase的行和列所构成的更像标签，而不是表格</em></div><br>对于我们熟悉的关系型数据库，如MySQL，一张表中每一行都有相同的列，即使部分行的某些列不存储数据，也有消耗，如图中的NULL。而HBase，各行是相对独立的，可以有完全不同的列。</p>
@@ -45,19 +61,34 @@
 <h3 id="1-独立部署"><a href="#1-独立部署" class="headerlink" title="1. 独立部署"></a>1. 独立部署</h3><blockquote>
 <p>如果想要最快速的搭建供你练习HBase数据库操作的环境，那么这可能是你想要的。<br>独立部署模式下，HBase的所有进程都运行在一个JVM中，数据直接存储在本地磁盘。</p>
 </blockquote>
-<p>a. 下载安装包并解压<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://mirrors.tuna.tsinghua.edu.cn/apache/hbase/1.2.2/hbase-1.2.2-bin.tar.gz</span><br><span class="line">tar zxvf hbase-1.2.2-bin.tar.gz -C target-dir</span><br></pre></td></tr></table></figure></p>
-<p>b. 配置</p>
+<p>a. 下载安装包并解压</p>
+<pre><code>wget https://mirrors.tuna.tsinghua.edu.cn/apache/hbase/1.2.2/hbase-1.2.2-bin.tar.gz
+tar zxvf hbase-1.2.2-bin.tar.gz -C target-dir
+</code></pre><p>b. 配置</p>
 <ul>
 <li>在<em>/etc/hosts</em>中配置localhost的地址：<em>127.0.0.1 localhost</em></li>
 <li>JAVA_HOME：在<em>conf/hbase-env.sh</em>中配置,例如：<em>export JAVA_HOME=/usr/local/jdk</em></li>
 <li>配置HBase和zookeeper保存数据的位置：<ul>
 <li>如果不配置，默认写在/tmp目录下</li>
-<li>在<em>conf/hbase-site.xml.</em>中配置,地址格式有两种，例如：<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.rootdir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>file:///home/hbase/hbase1.2.2<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.zookeeper.property.dataDir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hbase/hbase1.2.2/zookeeper<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<li>在<em>conf/hbase-site.xml.</em>中配置,地址格式有两种，例如：<pre><code class="xml">&lt;configuration&gt;
+  &lt;property&gt;
+      &lt;name&gt;hbase.rootdir&lt;/name&gt;
+      &lt;value&gt;file:///home/hbase/hbase1.2.2&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+      &lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt;
+      &lt;value&gt;/home/hbase/hbase1.2.2/zookeeper&lt;/value&gt;
+  &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre>
 </li>
 </ul>
 </li>
 </ul>
-<p>c. 启动和停止<br>   可以直接在HBase安装目录运行<em>bin/start-hbase.sh</em>启动：<br>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[hbase@iZ25n0dx8rxZh base]$ ./bin/start-hbase.sh </span><br><span class="line">starting master, logging to /usr/<span class="built_in">local</span>/hbase/bin/../logs/hbase-hbase-master-iZ25n0dx8rxZ.out</span><br></pre></td></tr></table></figure></p>
+<p>c. 启动和停止<br>   可以直接在HBase安装目录运行<em>bin/start-hbase.sh</em>启动：</p>
+<pre><code class="bash">[hbase@iZ25n0dx8rxZh base]$ ./bin/start-hbase.sh 
+starting master, logging to /usr/local/hbase/bin/../logs/hbase-hbase-master-iZ25n0dx8rxZ.out
+</code></pre>
 <p>启动日志默认位于<em>./logs/hbase-[username]-master-[yourhostname].log</em>，启动成功后，用<em>jps</em>命令可以看到名为HMaster的进程。接下来，你就可以使用hbase的shell来进行操作练习了。<br>要停止hbase，使用<em>bin/stop-hbase.sh</em>。</p>
 <p>d. UI访问<br>  Hbase内建了一个用Jetty提供服务的web UI页面来查看该HBase环境的各种信息，默认端口16010，尝试用<em><a href="http://hostip:16010/" target="_blank" rel="external">http://hostip:16010/</a></em>来访问。</p>
 <h3 id="2-伪分布式部署"><a href="#2-伪分布式部署" class="headerlink" title="2. 伪分布式部署"></a>2. 伪分布式部署</h3><blockquote>
@@ -67,17 +98,43 @@
 <p><div align="center" style="color:#808080;font-size:12px"><em>图3 HBase架构概要图</em></div><br>作为入门阶段，先从粗粒度对HBase的架构进行简单了解：<br><strong>HMaster：</strong>主要负责监控集群、管理RegionServers的负责均衡等，可以用主-备形式部署多个Master。<br><strong>HRegionServers：</strong>负责响应用户的I/O操作请求，客户端对HBase读写数据是与RegionServer交互。<br><strong>Zookeeper：</strong>负责选举Master的主节点；服务注册；保存RegionServers的状态等。可以使用系统内建的zookeeper，也可以使用独立的zookeeper，只需要在配置文件中调整即可。<br><strong>HDFS：</strong>真正的数据持久层，并非必须是HDFS文件系统，但搭配HDFS是最佳选择，也是目前应用最广泛的选择。</p>
 <p><strong>b. 开始部署</strong><br>伪分布式模式下，需要保证<em>ssh localhost</em>能够成功连接(将HBase所属用户的publickey追加到其自身的authorized_keys中)。如果你跟随本文启动了独立模式的HBase，先将其停止。</p>
 <ul>
-<li><p>开启分布式配置<br>最基本的伪分布式配置，只需要在独立模式的配置基础上，追加开启分布式模式的配置，即将<em>hbase.cluster.distributed</em>配置为true，例如：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.rootdir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hbase/hbase1.2.2<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.zookeeper.property.dataDir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">value</span>&gt;</span>file:///home/hbase/hbase1.2.2/zookeeper<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.cluster.distributed<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<li>开启分布式配置<br>最基本的伪分布式配置，只需要在独立模式的配置基础上，追加开启分布式模式的配置，即将<em>hbase.cluster.distributed</em>配置为true，例如：<pre><code class="xml">&lt;configuration&gt;
+    &lt;property&gt;
+      &lt;name&gt;hbase.rootdir&lt;/name&gt;
+      &lt;value&gt;/home/hbase/hbase1.2.2&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+      &lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt;
+      &lt;value&gt;file:///home/hbase/hbase1.2.2/zookeeper&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+      &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
+      &lt;value&gt;true&lt;/value&gt;
+    &lt;/property&gt;
+ &lt;/configuration&gt;
+</code></pre>
 </li>
-<li><p>在安装目录运行<em>bin/start-hbase.sh</em></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[hbase@iZ25n0dx8rxZ hbase]$ ./bin/start-hbase.sh</span><br><span class="line">localhost: starting zookeeper, logging to /usr/<span class="built_in">local</span>/hbase/bin/../logs/hbase-hbase-zookeeper-iZ25n0dx8rxZ.out</span><br><span class="line">starting master, logging to /usr/<span class="built_in">local</span>/hbase/bin/../logs/hbase-hbase-master-iZ25n0dx8rxZ.out</span><br><span class="line">starting regionserver, logging to /usr/<span class="built_in">local</span>/hbase/bin/../logs/hbase-hbase-1-regionserver-iZ25n0dx8rxZ.out</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>可以看到依次启动了zookeeper、master和regionserver，启动日志为<em>./logs</em>路径下的<em>.log</em>文件。</p>
-<ul>
+<li>在安装目录运行<em>bin/start-hbase.sh</em><pre><code class="bash">[hbase@iZ25n0dx8rxZ hbase]$ ./bin/start-hbase.sh
+localhost: starting zookeeper, logging to /usr/local/hbase/bin/../logs/hbase-hbase-zookeeper-iZ25n0dx8rxZ.out
+starting master, logging to /usr/local/hbase/bin/../logs/hbase-hbase-master-iZ25n0dx8rxZ.out
+starting regionserver, logging to /usr/local/hbase/bin/../logs/hbase-hbase-1-regionserver-iZ25n0dx8rxZ.out
+</code></pre>
+可以看到依次启动了zookeeper、master和regionserver，启动日志为<em>./logs</em>路径下的<em>.log</em>文件。</li>
 <li><p>查看启动的进程以及占用的端口：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[hbase@iZ25n0dx8rxZ logs]$ jps</span><br><span class="line">4610 HRegionServer</span><br><span class="line">4456 HQuorumPeer</span><br><span class="line">5338 Jps</span><br><span class="line">4522 HMaster</span><br><span class="line">[hbase@iZ25n0dx8rxZ logs]$ netstat -lnp|grep 4522</span><br><span class="line">tcp        0      0 172.16.5.23:16000           0.0.0.0:*                   LISTEN      4522/java           </span><br><span class="line">tcp        0      0 0.0.0.0:16010               0.0.0.0:*                   LISTEN      4522/java           </span><br><span class="line">[hbase@iZ25n0dx8rxZ logs]$ netstat -lnp|grep 4610</span><br><span class="line">tcp        0      0 172.16.5.23:16201           0.0.0.0:*                   LISTEN      4610/java           </span><br><span class="line">tcp        0      0 0.0.0.0:16301               0.0.0.0:*                   LISTEN      4610/java           </span><br><span class="line">[root@iZ25n0dx8rxZ logs]$ netstat -lnp|grep 4456</span><br><span class="line">tcp        0      0 0.0.0.0:2188                0.0.0.0:*                   LISTEN      4456/java</span><br></pre></td></tr></table></figure>
+<pre><code class="bash">[hbase@iZ25n0dx8rxZ logs]$ jps
+4610 HRegionServer
+4456 HQuorumPeer
+5338 Jps
+4522 HMaster
+[hbase@iZ25n0dx8rxZ logs]$ netstat -lnp|grep 4522
+tcp        0      0 172.16.5.23:16000           0.0.0.0:*                   LISTEN      4522/java           
+tcp        0      0 0.0.0.0:16010               0.0.0.0:*                   LISTEN      4522/java           
+[hbase@iZ25n0dx8rxZ logs]$ netstat -lnp|grep 4610
+tcp        0      0 172.16.5.23:16201           0.0.0.0:*                   LISTEN      4610/java           
+tcp        0      0 0.0.0.0:16301               0.0.0.0:*                   LISTEN      4610/java           
+[root@iZ25n0dx8rxZ logs]$ netstat -lnp|grep 4456
+tcp        0      0 0.0.0.0:2188                0.0.0.0:*                   LISTEN      4456/java
+</code></pre>
 <ul>
 <li>HMaster占用16000(工作进程)和16010(Master的web UI服务端口)</li>
 <li>HRegionServer占用16201(工作进程)和16301(Regionserver的web UI服务)</li>
@@ -86,21 +143,20 @@
 </li>
 <li><p><strong>启动和停止备份Master节点<em>(backup HMaster)</em></strong>：</p>
 <ul>
-<li>运行<em>./bin/local-master-backup.sh start n</em>来启动一个备份节点，如：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[hbase@iZ25n0dx8rxZ hbase]<span class="comment"># ./bin/local-master-backup.sh start 1</span></span><br><span class="line">starting master, logging to /usr/<span class="built_in">local</span>/hbase/bin/../logs/hbase-hbase-1-master-iZ25n0dx8rxZ.out</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>启动成功后，<em>jps</em>命令可以看到总共有两个HMaster进程。</p>
-<ul>
+<li>运行<em>./bin/local-master-backup.sh start n</em>来启动一个备份节点，如：<pre><code class="bash">[hbase@iZ25n0dx8rxZ hbase]$ ./bin/local-master-backup.sh start 1
+starting master, logging to /usr/local/hbase/bin/../logs/hbase-hbase-1-master-iZ25n0dx8rxZ.out
+</code></pre>
+启动成功后，<em>jps</em>命令可以看到总共有两个HMaster进程。</li>
 <li>端口：<strong>n</strong>用来指定占用的端口号，规则为<strong>[默认端口号+n]</strong>,如例子中的<em>./bin/local-master-backup.sh start 1</em>所启动的HMaster占用16001(工作端口)和16011(web UI服务端口)，以此类推。</li>
 <li>web UI访问：<em><a href="http://ip:1601n/" target="_blank" rel="external">http://ip:1601n/</a></em></li>
-<li><p>日志：启动日志在<em>./logs/hbase-[username]-n-master-[hostname].log</em>，在上例的日志中，可以看到这样一行日志说明该节点目前是作为备用节点：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">master.ActiveMasterManager: Another master is the active master, iz25n0dx8rxz,16000,1469262015657; waiting to become the next active master</span><br></pre></td></tr></table></figure>
+<li>日志：启动日志在<em>./logs/hbase-[username]-n-master-[hostname].log</em>，在上例的日志中，可以看到这样一行日志说明该节点目前是作为备用节点：<pre><code class="bash">master.ActiveMasterManager: Another master is the active master, iz25n0dx8rxz,16000,1469262015657; waiting to become the next active master
+</code></pre>
 </li>
-<li><p>主节点切换：要观察HBase的Master组件主节点切换，可以使用<em>kill -9 PID</em>停止当前主节点<em>(即最初启动的HMaster)</em>，此时刚启动的备份节点将切换为主节点，可以在备份节点的日志<em>(./logs/hbase-[username]-1-master-[hostname].log)</em>中看到如下内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">INFO  [iZ25n0dx8rxZ:16001.activeMasterManager] master.ActiveMasterManager: Deleting ZNode <span class="keyword">for</span> /hbase/backup-masters/iz25n0dx8rxz,16001,1469267021567 from backup master directory</span><br><span class="line">INFO  [iZ25n0dx8rxZ:16001.activeMasterManager] master.ActiveMasterManager: Registered Active Master=iz25n0dx8rxz,16001,1469267021567</span><br></pre></td></tr></table></figure>
+<li>主节点切换：要观察HBase的Master组件主节点切换，可以使用<em>kill -9 PID</em>停止当前主节点<em>(即最初启动的HMaster)</em>，此时刚启动的备份节点将切换为主节点，可以在备份节点的日志<em>(./logs/hbase-[username]-1-master-[hostname].log)</em>中看到如下内容：<pre><code class="bash">INFO  [iZ25n0dx8rxZ:16001.activeMasterManager] master.ActiveMasterManager: Deleting ZNode for /hbase/backup-masters/iz25n0dx8rxz,16001,1469267021567 from backup master directory
+INFO  [iZ25n0dx8rxZ:16001.activeMasterManager] master.ActiveMasterManager: Registered Active Master=iz25n0dx8rxz,16001,1469267021567
+</code></pre>
 </li>
-<li><p>停止：使用<em>./bin/local-master-backup.sh stop n</em>来停止你的备份节点。</p>
-</li>
+<li>停止：使用<em>./bin/local-master-backup.sh stop n</em>来停止你的备份节点。</li>
 <li>多备：可以一次启动多个backup HMaster，命令类似于<em>./bin/local-master-backup.sh start x y z</em>。</li>
 </ul>
 </li>
@@ -114,29 +170,46 @@
 <p>本节介绍使用HBase shell在直接在服务器上对HBase进行基本操作，HBase shell是在(J)Ruby的IRB的基础上增加了HBase特有的命令，遵循IRB的操作。</p>
 </blockquote>
 <ol>
-<li><p>连接：<em>./bin/hbase shell</em></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[hbase@iZ25n0dx8rxZ hbase]$ ./bin/hbase shell</span><br><span class="line">HBase Shell; enter <span class="string">'help&lt;RETURN&gt;'</span> <span class="keyword">for</span> list of supported commands.</span><br><span class="line">Type <span class="string">"exit&lt;RETURN&gt;"</span> to leave the HBase Shell</span><br><span class="line">Version 1.2.2, r3f671c1ead70d249ea4598f1bbcc5151322b3a13, Fri Jul  1 08:28:55 CDT 2016</span><br><span class="line">hbase(main):001:0&gt;</span><br></pre></td></tr></table></figure>
+<li>连接：<em>./bin/hbase shell</em><pre><code class="bash">[hbase@iZ25n0dx8rxZ hbase]$ ./bin/hbase shell
+HBase Shell; enter &#39;help&lt;RETURN&gt;&#39; for list of supported commands.
+Type &quot;exit&lt;RETURN&gt;&quot; to leave the HBase Shell
+Version 1.2.2, r3f671c1ead70d249ea4598f1bbcc5151322b3a13, Fri Jul  1 08:28:55 CDT 2016
+hbase(main):001:0&gt;
+</code></pre>
 </li>
 <li><p>建表：<em>create ‘test’, ‘cf1’, ‘cf2’</em>，即[create ‘表名’, ‘列族名’,..]，列族名可以有多个，<em>list</em>用于查看有哪些表</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):008:0&gt; create <span class="string">'test'</span>,<span class="string">'cf1'</span>,<span class="string">'cf2'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 1.2280 seconds</span><br><span class="line">=&gt; Hbase::Table - <span class="built_in">test</span></span><br><span class="line">hbase(main):009:0&gt;</span><br></pre></td></tr></table></figure>
+<pre><code class="bash">hbase(main):008:0&gt; create &#39;test&#39;,&#39;cf1&#39;,&#39;cf2&#39;
+0 row(s) in 1.2280 seconds
+=&gt; Hbase::Table - test
+hbase(main):009:0&gt;
+</code></pre>
 </li>
 <li><p>写数据：<em>put ‘test’, ‘row1’, ‘cf1:c1’, ‘value1’</em>，即[put ‘表名’,’行键’,’列族名:列名’,’数据’]</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):001:0&gt; put <span class="string">'test'</span>,<span class="string">'row1'</span>,<span class="string">'cf1:c1'</span>,<span class="string">'value1'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.3160 seconds</span><br><span class="line">hbase(main):002:0&gt; put <span class="string">'test'</span>,<span class="string">'row1'</span>,<span class="string">'cf1:c1'</span>,<span class="string">'value2'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 0.3020 seconds</span><br></pre></td></tr></table></figure>
+<pre><code class="bash">hbase(main):001:0&gt; put &#39;test&#39;,&#39;row1&#39;,&#39;cf1:c1&#39;,&#39;value1&#39;
+0 row(s) in 0.3160 seconds
+hbase(main):002:0&gt; put &#39;test&#39;,&#39;row1&#39;,&#39;cf1:c1&#39;,&#39;value2&#39;
+0 row(s) in 0.3020 seconds
+</code></pre>
 </li>
-<li><p>查看数据：</p>
-<ul>
-<li>全表数据：<em>scan ‘test’</em>，即[scan ‘表名’]<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):001:0&gt; scan <span class="string">'test'</span></span><br><span class="line">ROW                                            COLUMN+CELL                                                                                                                             </span><br><span class="line"> row1                                          column=cf1:c1, timestamp=1469277197280, value=value2                                                                                    </span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.2710 seconds</span><br><span class="line">hbase(main):002:0&gt;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>可以看到在put时指定的属性之外，有一个<strong>timestamp</strong>属性来作为版本标识，我们查看全表数据时，row1的cf1:c1列中展示的值是我们后一次写入的value2，sacn和get在不指定版本时，得到的是最近版本的数据</p>
-<ul>
+<li>查看数据：<ul>
+<li>全表数据：<em>scan ‘test’</em>，即[scan ‘表名’]<pre><code class="bash">hbase(main):001:0&gt; scan &#39;test&#39;
+ROW                                            COLUMN+CELL                                                                                                                             
+row1                                          column=cf1:c1, timestamp=1469277197280, value=value2                                                                                    
+1 row(s) in 0.2710 seconds
+hbase(main):002:0&gt;
+</code></pre>
+可以看到在put时指定的属性之外，有一个<strong>timestamp</strong>属性来作为版本标识，我们查看全表数据时，row1的cf1:c1列中展示的值是我们后一次写入的value2，sacn和get在不指定版本时，得到的是最近版本的数据</li>
 <li>指定行的数据：<em>get ‘test’, ‘row1’</em>，即[get ‘表名’,’行键’]</li>
-<li>指定版本的数据：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):005:0&gt; get <span class="string">'test'</span>,<span class="string">'row1'</span>,&#123;COLUMN=&gt;<span class="string">'cf1:c1'</span>,TIMESTAMP=&gt;1469277197280&#125;</span><br><span class="line">COLUMN                                         CELL                                                                                                                                    </span><br><span class="line"> cf1:c1                                        timestamp=1469277197280, value=value1                                                                                                   </span><br><span class="line">1 row(s) <span class="keyword">in</span> 0.0270 seconds</span><br><span class="line">hbase(main):006:0&gt;</span><br></pre></td></tr></table></figure>
+<li>指定版本的数据：<pre><code class="bash">hbase(main):005:0&gt; get &#39;test&#39;,&#39;row1&#39;,{COLUMN=&gt;&#39;cf1:c1&#39;,TIMESTAMP=&gt;1469277197280}
+COLUMN                                         CELL                                                                                                                                    
+cf1:c1                                        timestamp=1469277197280, value=value1                                                                                                   
+1 row(s) in 0.0270 seconds
+hbase(main):006:0&gt;
+</code></pre>
 </li>
 </ul>
 </li>
-<li><p><strong>版本数量</strong>：每个列族有一个单独的VERSIONS属性，默认为1，可以在建表时指定：<code>create &#39;test1&#39;,{NAME=&gt;&#39;cf1&#39;,VERSIONS=&gt;3}</code>，代表该列族的每个列最多保存最近3个版本的数据，也可以通过<em>alter</em>来更新：<code>alter &#39;test1&#39;,NAME=&gt;&#39;cf1&#39;,VERSIONS=&gt;3</code>。查询数据时，可以通过设置VERSIONS来指定显示最近几个版本的数据<em>(最大范围不超过该列族的VERSIONS属性值)</em>：<code>get &#39;test&#39;,&#39;row1&#39;,{COLUMN=&gt;&#39;cf1:c1&#39;,VERSIONS=&gt;2}</code></p>
-</li>
+<li><strong>版本数量</strong>：每个列族有一个单独的VERSIONS属性，默认为1，可以在建表时指定：<code>create &#39;test1&#39;,{NAME=&gt;&#39;cf1&#39;,VERSIONS=&gt;3}</code>，代表该列族的每个列最多保存最近3个版本的数据，也可以通过<em>alter</em>来更新：<code>alter &#39;test1&#39;,NAME=&gt;&#39;cf1&#39;,VERSIONS=&gt;3</code>。查询数据时，可以通过设置VERSIONS来指定显示最近几个版本的数据<em>(最大范围不超过该列族的VERSIONS属性值)</em>：<code>get &#39;test&#39;,&#39;row1&#39;,{COLUMN=&gt;&#39;cf1:c1&#39;,VERSIONS=&gt;2}</code></li>
 <li>删除数据：<ul>
 <li>删除指定单元格：<em>delete ‘test’,’row1’,’cf1:c1’,1469277197280</em>，<em>将删除指定版本以及比其更早的版本</em></li>
 <li>删除指定行的指定列：<em>delete ‘test’,’row1’,’cf1:c1’</em></li>
@@ -255,11 +328,23 @@
 <p><strong>Apdex (Application Performance Index)</strong> is an open standard developed by an alliance of companies. It defines a standard method for reporting and comparing the performance of software applications in computing.<br>– <a href="https://en.wikipedia.org/wiki/Apdex" target="_blank" rel="external">wikipedia</a></p>
 </blockquote>
 <h2 id="三-快速入门"><a href="#三-快速入门" class="headerlink" title="三.快速入门"></a>三.快速入门</h2><h3 id="1-确认基本配置"><a href="#1-确认基本配置" class="headerlink" title="1.确认基本配置"></a>1.确认基本配置</h3><ul>
-<li><p>在jmeter.properties或者user.properties确认如下配置项：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">jmeter.save.saveservice.bytes = true</span><br><span class="line">jmeter.save.saveservice.label = true</span><br><span class="line">jmeter.save.saveservice.latency = true</span><br><span class="line">jmeter.save.saveservice.response_code = true</span><br><span class="line">jmeter.save.saveservice.response_message = true</span><br><span class="line">jmeter.save.saveservice.successful = true</span><br><span class="line">jmeter.save.saveservice.thread_counts = true</span><br><span class="line">jmeter.save.saveservice.thread_name = true</span><br><span class="line">jmeter.save.saveservice.time = true</span><br><span class="line"># the timestamp format must include the time and should include the date.</span><br><span class="line"># For example the default, which is milliseconds since the epoch: </span><br><span class="line">jmeter.save.saveservice.timestamp_format = ms</span><br><span class="line"># Or the following would also be suitable</span><br><span class="line">jmeter.save.saveservice.timestamp_format = yyyy/MM/dd HH:mm:ss</span><br></pre></td></tr></table></figure>
+<li>在jmeter.properties或者user.properties确认如下配置项：<pre><code class="xml">jmeter.save.saveservice.bytes = true
+jmeter.save.saveservice.label = true
+jmeter.save.saveservice.latency = true
+jmeter.save.saveservice.response_code = true
+jmeter.save.saveservice.response_message = true
+jmeter.save.saveservice.successful = true
+jmeter.save.saveservice.thread_counts = true
+jmeter.save.saveservice.thread_name = true
+jmeter.save.saveservice.time = true
+# the timestamp format must include the time and should include the date.
+# For example the default, which is milliseconds since the epoch: 
+jmeter.save.saveservice.timestamp_format = ms
+# Or the following would also be suitable
+jmeter.save.saveservice.timestamp_format = yyyy/MM/dd HH:mm:ss
+</code></pre>
 </li>
-<li><p>如果希望在Errors报告中展示更详细数据，需要确保如下配置</p>
-<ul>
+<li>如果希望在Errors报告中展示更详细数据，需要确保如下配置<ul>
 <li><code>jmeter.save.saveservice.assertion_results_failure_message = true</code></li>
 <li>如果使用了事务控制器(Transaction Controller)，确认<em>Generate parent sample</em>为未勾选状态</li>
 </ul>
@@ -280,15 +365,19 @@
 <h2 id="四-自定义配置"><a href="#四-自定义配置" class="headerlink" title="四.自定义配置"></a>四.自定义配置</h2><p>JMeter3.0在bin目录新增了<code>reportgenerator.properties</code>文件保存了所有关于图形化HTML报告生成模块的默认配置，要变更配置，建议不要直接编辑该文件，而是推荐在<code>user.properties</code>中去配置和覆盖。</p>
 <h3 id="1-总体配置"><a href="#1-总体配置" class="headerlink" title="1.总体配置"></a>1.总体配置</h3><p>总体配置都是以<code>jmeter.reportgenerator.</code>为前缀。如：jmeter.reportgenerator.overall_granularity=60000</p>
 <ul>
-<li><p><code>overall_granularity</code>：定义采样点粒度，默认为60000ms，通常在稳定性以外的测试中，我们可能需要定义更细的粒度，比如1000ms，我们可以在<code>user.properties</code>文件末尾添加如下配置：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Change this parameter if you want to change the granularity of over time graphs.</span><br><span class="line">jmeter.reportgenerator.overall_granularity=6000</span><br></pre></td></tr></table></figure>
+<li><code>overall_granularity</code>：定义采样点粒度，默认为60000ms，通常在稳定性以外的测试中，我们可能需要定义更细的粒度，比如1000ms，我们可以在<code>user.properties</code>文件末尾添加如下配置：<pre><code class="xml"># Change this parameter if you want to change the granularity of over time graphs.
+jmeter.reportgenerator.overall_granularity=6000
+</code></pre>
 </li>
-<li><p><code>report_title</code>:定义报告的标题，我们可能需要将标题定义为实际测试项名称</p>
-</li>
+<li><code>report_title</code>:定义报告的标题，我们可能需要将标题定义为实际测试项名称</li>
 <li><code>apdex_satisfied_threshold</code>：定义Apdex评估中<strong>满意</strong>的阈值(单位ms)</li>
 <li><code>apdex_tolerated_threshold</code>: 定义Apdex评估中<strong>可容忍</strong>的阈值<br><code>Apdext = (Satisfied Count + Tolerating Count / 2) / Total Samples</code></li>
 </ul>
-<p>另外，在<code>jmeter.properties</code>中，有关于集合报告中的三个百分位的默认值：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">aggregate_rpt_pct1 : Defaults to 90</span><br><span class="line">aggregate_rpt_pct2 : Defaults to 95</span><br><span class="line">aggregate_rpt_pct3 : Defaults to 99</span><br></pre></td></tr></table></figure></p>
+<p>另外，在<code>jmeter.properties</code>中，有关于集合报告中的三个百分位的默认值：</p>
+<pre><code class="xml">aggregate_rpt_pct1 : Defaults to 90
+aggregate_rpt_pct2 : Defaults to 95
+aggregate_rpt_pct3 : Defaults to 99
+</code></pre>
 <p>可以在<code>user.properties</code>中对其进行覆盖，如：<code>aggregate_rpt_pct1 = 70</code>，效果如下：<br><img src="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x04h6f3dj20bl06cq3b.jpg" alt=""></p>
 <h3 id="2-图表配置"><a href="#2-图表配置" class="headerlink" title="2.图表配置"></a>2.图表配置</h3><p>每个图表配置都是以<code>jmeter.reportgenerator.graph.&lt;图表名称&gt;.</code>为前缀。</p>
 <ul>
@@ -343,13 +432,166 @@
 <blockquote>
 <p><em>泛接口调用方式主要用于客户端没有API接口及模型类元的情况，参数及返回值中的所有POJO均用Map表示，通常用于框架集成，比如：实现一个通用的服务测试框架，可通过GenericService调用所有服务实现。</em><br>– Dubbo用户指南</p>
 </blockquote>
-<h2 id="一-后端API"><a href="#一-后端API" class="headerlink" title="一.后端API"></a>一.后端API</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserInfoService</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Map&lt;String, String&gt; <span class="title">getUser</span><span class="params">(String id)</span></span>;</span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, String&gt;[] getUsers();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="二-Router端dubbo配置"><a href="#二-Router端dubbo配置" class="headerlink" title="二.Router端dubbo配置"></a>二.Router端dubbo配置</h2><p><code>dubboconf.properties:</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">application.name=router</span><br><span class="line">registry.address=zookeeper://address1?buckup=address2,address3</span><br></pre></td></tr></table></figure></p>
-<h2 id="三-前端服务post到Router的Request-Body示例："><a href="#三-前端服务post到Router的Request-Body示例：" class="headerlink" title="三.前端服务post到Router的Request Body示例："></a>三.前端服务post到Router的Request Body示例：</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"interfaceName"</span>: <span class="string">"foo"</span>, </span><br><span class="line">    <span class="attr">"methodName"</span>: <span class="string">"bar"</span>, </span><br><span class="line">    <span class="attr">"methodParams"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"id"</span>: <span class="string">"xxx"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="四-处理前端参数用的Dto"><a href="#四-处理前端参数用的Dto" class="headerlink" title="四.处理前端参数用的Dto"></a>四.处理前端参数用的Dto</h2><p><code>RequestDto.java:</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Created by Luo</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestDto</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String interfaceName;</span><br><span class="line">    <span class="keyword">private</span> String methodName</span><br><span class="line">    <span class="keyword">private</span> Map[] methodParams;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getInterfaceName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> interfaceName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setInterfaceName</span><span class="params">(String interfaceName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.interfaceName =  interfaceName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMethodName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> methodName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMethodName</span><span class="params">(String methodName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.methodName = methodName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> Map[] getMethodParams() &#123;</span><br><span class="line">        <span class="keyword">return</span> methodParams;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMethodParam</span><span class="params">(Map[] methodParams)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.methodParams = methodParams;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="五-Router服务入口"><a href="#五-Router服务入口" class="headerlink" title="五.Router服务入口"></a>五.Router服务入口</h2><p><code>RouterController.java:</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Created by Luo</span><br><span class="line"> */</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">        <span class="meta">@RequestMapping</span>(value = <span class="string">"/router/"</span>, method = RequestMethod.POST)</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">getUser</span><span class="params">(@ModelAttribute RequestDto dto)</span> </span>&#123;</span><br><span class="line">            Map map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">            map.put(<span class="string">"ParamType"</span>, <span class="string">"java.lang.String"</span>);  <span class="comment">//后端接口参数类型</span></span><br><span class="line">            map.put(<span class="string">"Object"</span>, dto.getMethodParams()[<span class="number">0</span>].get(<span class="string">"id"</span>));  <span class="comment">//用以调用后端接口的实参</span></span><br><span class="line"></span><br><span class="line">            List&lt;Map&lt;String, Object&gt;&gt; paramInfos= <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            paramInfos.add(map);</span><br><span class="line"></span><br><span class="line">            DubboServiceFactory dubbo = DubboServiceFactory.getInstance();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> dubbo.genericInvoke(dto.getInterfaceName(), dto.getMethodName(), paramInfos);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="一-后端API"><a href="#一-后端API" class="headerlink" title="一.后端API"></a>一.后端API</h2><pre><code class="java">public interface UserInfoService {
+    public Map&lt;String, String&gt; getUser(String id);
+    public Map&lt;String, String&gt;[] getUsers();
+}
+</code></pre>
+<h2 id="二-Router端dubbo配置"><a href="#二-Router端dubbo配置" class="headerlink" title="二.Router端dubbo配置"></a>二.Router端dubbo配置</h2><p><code>dubboconf.properties:</code></p>
+<pre><code>application.name=router
+registry.address=zookeeper://address1?buckup=address2,address3
+</code></pre><h2 id="三-前端服务post到Router的Request-Body示例："><a href="#三-前端服务post到Router的Request-Body示例：" class="headerlink" title="三.前端服务post到Router的Request Body示例："></a>三.前端服务post到Router的Request Body示例：</h2><pre><code class="json">{
+    &quot;interfaceName&quot;: &quot;foo&quot;, 
+    &quot;methodName&quot;: &quot;bar&quot;, 
+    &quot;methodParams&quot;: [
+        {
+            &quot;id&quot;: &quot;xxx&quot;
+        }
+    ]
+}
+</code></pre>
+<h2 id="四-处理前端参数用的Dto"><a href="#四-处理前端参数用的Dto" class="headerlink" title="四.处理前端参数用的Dto"></a>四.处理前端参数用的Dto</h2><p><code>RequestDto.java:</code></p>
+<pre><code class="java">import java.util.Map;
+/**
+ * Created by Luo
+ */
+public class RequestDto {
+    private String interfaceName;
+    private String methodName
+    private Map[] methodParams;
+
+    public String getInterfaceName() {
+        return interfaceName;
+    }
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName =  interfaceName;
+    }
+    public String getMethodName() {
+        return methodName;
+    }
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+    public Map[] getMethodParams() {
+        return methodParams;
+    }
+    public void setMethodParam(Map[] methodParams) {
+        this.methodParams = methodParams;
+    }
+}
+</code></pre>
+<h2 id="五-Router服务入口"><a href="#五-Router服务入口" class="headerlink" title="五.Router服务入口"></a>五.Router服务入口</h2><p><code>RouterController.java:</code></p>
+<pre><code class="java">import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by Luo
+ */
+@RestController
+public class App {
+        @RequestMapping(value = &quot;/router/&quot;, method = RequestMethod.POST)
+        public Object getUser(@ModelAttribute RequestDto dto) {
+            Map map = new HashMap&lt;&gt;();
+            map.put(&quot;ParamType&quot;, &quot;java.lang.String&quot;);  //后端接口参数类型
+            map.put(&quot;Object&quot;, dto.getMethodParams()[0].get(&quot;id&quot;));  //用以调用后端接口的实参
+
+            List&lt;Map&lt;String, Object&gt;&gt; paramInfos= new ArrayList&lt;&gt;();
+            paramInfos.add(map);
+
+            DubboServiceFactory dubbo = DubboServiceFactory.getInstance();
+
+            return dubbo.genericInvoke(dto.getInterfaceName(), dto.getMethodName(), paramInfos);
+        }
+}
+</code></pre>
 <p><em>注：本文旨在演示泛化调用的一种应用方式，为简明起见，代码中直接从dto中获取了指定参数，而并没有完整实现其路由功能，望见谅。</em></p>
-<h2 id="六-通过GenericService进行泛化调用"><a href="#六-通过GenericService进行泛化调用" class="headerlink" title="六.通过GenericService进行泛化调用"></a>六.通过GenericService进行泛化调用</h2><p><code>DubboServiceFactory.java</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> local.demo.genericservice;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.ApplicationConfig;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.ReferenceConfig;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.RegistryConfig;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.utils.ReferenceConfigCache;</span><br><span class="line"><span class="keyword">import</span> com.alibaba.dubbo.rpc.service.GenericService;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line"> * Created by Luo</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DubboServiceFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ApplicationConfig application;</span><br><span class="line">    <span class="keyword">private</span> RegistryConfig registry;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> DubboServiceFactory INSTANCE = <span class="keyword">new</span> DubboServiceFactory();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">DubboServiceFactory</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Properties prop = <span class="keyword">new</span> Properties();</span><br><span class="line">        ClassLoader loader = DubboServiceFactory.class.getClassLoader();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            prop.load(loader.getResourceAsStream(<span class="string">"dubboconf.properties"</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ApplicationConfig applicationConfig = <span class="keyword">new</span> ApplicationConfig();</span><br><span class="line">        applicationConfig.setName(prop.getProperty(<span class="string">"application.name"</span>)); </span><br><span class="line">        <span class="comment">//这里配置了dubbo的application信息*(demo只配置了name)*，因此demo没有额外的dubbo.xml配置文件</span></span><br><span class="line">        RegistryConfig registryConfig = <span class="keyword">new</span> RegistryConfig();</span><br><span class="line">        registryConfig.setAddress(prop.getProperty(<span class="string">"registry.address"</span>)); </span><br><span class="line">        <span class="comment">//这里配置dubbo的注册中心信息，因此demo没有额外的dubbo.xml配置文件</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.application = applicationConfig;</span><br><span class="line">        <span class="keyword">this</span>.registry = registryConfig;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> DubboServiceFactory <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">genericInvoke</span><span class="params">(String interfaceClass, String methodName, List&lt;Map&lt;String, Object&gt;&gt; parameters)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        ReferenceConfig&lt;GenericService&gt; reference = <span class="keyword">new</span> ReferenceConfig&lt;GenericService&gt;();</span><br><span class="line">        reference.setApplication(application); </span><br><span class="line">        reference.setRegistry(registry); </span><br><span class="line">        reference.setInterface(interfaceClass); <span class="comment">// 接口名 </span></span><br><span class="line">        reference.setGeneric(<span class="keyword">true</span>); <span class="comment">// 声明为泛化接口 </span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">//ReferenceConfig实例很重，封装了与注册中心的连接以及与提供者的连接，</span></span><br><span class="line">        <span class="comment">//需要缓存，否则重复生成ReferenceConfig可能造成性能问题并且会有内存和连接泄漏。</span></span><br><span class="line">        <span class="comment">//API方式编程时，容易忽略此问题。</span></span><br><span class="line">        <span class="comment">//这里使用dubbo内置的简单缓存工具类进行缓存</span></span><br><span class="line">        </span><br><span class="line">        ReferenceConfigCache cache = ReferenceConfigCache.getCache();</span><br><span class="line">        GenericService genericService = cache.get(reference); </span><br><span class="line">        <span class="comment">// 用com.alibaba.dubbo.rpc.service.GenericService可以替代所有接口引用 </span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> len = parameters.size();</span><br><span class="line">        String[] invokeParamTyeps = <span class="keyword">new</span> String[len];</span><br><span class="line">        Object[] invokeParams = <span class="keyword">new</span> Object[len];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++)&#123;</span><br><span class="line">            invokeParamTyeps[i] = parameters.get(i).get(<span class="string">"ParamType"</span>) + <span class="string">""</span>;</span><br><span class="line">            invokeParams[i] = parameters.get(i).get(<span class="string">"Object"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> genericService.$invoke(methodName, invokeParamTyeps, invokeParams);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="六-通过GenericService进行泛化调用"><a href="#六-通过GenericService进行泛化调用" class="headerlink" title="六.通过GenericService进行泛化调用"></a>六.通过GenericService进行泛化调用</h2><p><code>DubboServiceFactory.java</code></p>
+<pre><code class="java">package local.demo.genericservice;
+
+import com.alibaba.dubbo.config.ApplicationConfig;
+import com.alibaba.dubbo.config.ReferenceConfig;
+import com.alibaba.dubbo.config.RegistryConfig;
+import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
+import com.alibaba.dubbo.rpc.service.GenericService;
+
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+/**
+ * Created by Luo
+ */
+public class DubboServiceFactory {
+
+    private ApplicationConfig application;
+    private RegistryConfig registry;
+
+    private static class SingletonHolder {
+        private static DubboServiceFactory INSTANCE = new DubboServiceFactory();
+    }
+
+    private DubboServiceFactory(){
+        Properties prop = new Properties();
+        ClassLoader loader = DubboServiceFactory.class.getClassLoader();
+
+        try {
+            prop.load(loader.getResourceAsStream(&quot;dubboconf.properties&quot;));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ApplicationConfig applicationConfig = new ApplicationConfig();
+        applicationConfig.setName(prop.getProperty(&quot;application.name&quot;)); 
+        //这里配置了dubbo的application信息*(demo只配置了name)*，因此demo没有额外的dubbo.xml配置文件
+        RegistryConfig registryConfig = new RegistryConfig();
+        registryConfig.setAddress(prop.getProperty(&quot;registry.address&quot;)); 
+        //这里配置dubbo的注册中心信息，因此demo没有额外的dubbo.xml配置文件
+
+        this.application = applicationConfig;
+        this.registry = registryConfig;
+
+    }
+
+    public static DubboServiceFactory getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
+    public Object genericInvoke(String interfaceClass, String methodName, List&lt;Map&lt;String, Object&gt;&gt; parameters){
+
+        ReferenceConfig&lt;GenericService&gt; reference = new ReferenceConfig&lt;GenericService&gt;();
+        reference.setApplication(application); 
+        reference.setRegistry(registry); 
+        reference.setInterface(interfaceClass); // 接口名 
+        reference.setGeneric(true); // 声明为泛化接口 
+
+        //ReferenceConfig实例很重，封装了与注册中心的连接以及与提供者的连接，
+        //需要缓存，否则重复生成ReferenceConfig可能造成性能问题并且会有内存和连接泄漏。
+        //API方式编程时，容易忽略此问题。
+        //这里使用dubbo内置的简单缓存工具类进行缓存
+
+        ReferenceConfigCache cache = ReferenceConfigCache.getCache();
+        GenericService genericService = cache.get(reference); 
+        // 用com.alibaba.dubbo.rpc.service.GenericService可以替代所有接口引用 
+
+        int len = parameters.size();
+        String[] invokeParamTyeps = new String[len];
+        Object[] invokeParams = new Object[len];
+        for(int i = 0; i &lt; len; i++){
+            invokeParamTyeps[i] = parameters.get(i).get(&quot;ParamType&quot;) + &quot;&quot;;
+            invokeParams[i] = parameters.get(i).get(&quot;Object&quot;);
+        }
+        return genericService.$invoke(methodName, invokeParamTyeps, invokeParams);
+    }
+
+}
+</code></pre>
 <h2 id="七-部署"><a href="#七-部署" class="headerlink" title="七.部署"></a>七.部署</h2><p>将Router部署到Jetty/Tomcat等容器，或者直接使用<a href="http://projects.spring.io/spring-boot/" target="_blank" rel="external">SpringBoot</a>开发，发布为内嵌Jetty/Tomcat的独立jar包，即可向前端服务提供服务。</p>
 ]]></content>
     </entry>
@@ -402,24 +644,49 @@
 <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><a href="http://projects.spring.io/spring-boot/" target="_blank" rel="external">Spring Boot</a>，作为Spring框架对“约定优先于配置(Convention Over Configuration)”理念的最佳实践的产物，它能帮助我们很快捷的创建出独立运行、产品级别的基于Spring框架的应用，大部分Spring Boot应用只需要非常少的配置就可以快速运行起来，是一个与微服务(MicroServices)相当契合的微框架。<br>网络上关于Spring Boot的QuickStart式中文内容已经相当丰富，但是对于部署后怎样便捷、安全地停止服务(shutdown)，还比较缺乏，最近发现Spring Boot的官方指南更新了相关内容，因此结合该部分更新，对如何<strong>基于官方提供的特性</strong>正确地停止Spring Boot应用进行简单说明。</p>
 <p>主要有两种方式：通过<code>HTTP</code>发送<code>shutdown</code>信号，或者通过<code>service stop</code>的方式<br><a id="more"></a></p>
 <h2 id="方式一：通过HTTP发送shutdown信号"><a href="#方式一：通过HTTP发送shutdown信号" class="headerlink" title="方式一：通过HTTP发送shutdown信号"></a>方式一：通过<code>HTTP</code>发送<code>shutdown</code>信号</h2><p>该方式主要依赖<code>Spring Boot Actuator</code>的<code>endpoint</code>特性，具体步骤如下：</p>
-<h3 id="1-在pom-xml中引入actuator依赖"><a href="#1-在pom-xml中引入actuator依赖" class="headerlink" title="1. 在pom.xml中引入actuator依赖"></a>1. 在<code>pom.xml</code>中引入<code>actuator</code>依赖</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="2-开启shutdown-endpoint"><a href="#2-开启shutdown-endpoint" class="headerlink" title="2. 开启shutdown endpoint"></a>2. 开启<code>shutdown endpoint</code></h3><p>  <code>Spring Boot Actuator</code>的<code>shutdown endpoin</code>t默认是关闭的，因此在<code>application.properties</code>中开启<code>shutdown endpoint</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#启用shutdown</span><br><span class="line">endpoints.shutdown.enabled=true</span><br><span class="line">#禁用密码验证</span><br><span class="line">endpoints.shutdown.sensitive=false</span><br></pre></td></tr></table></figure></p>
-<h3 id="3-发送shutdown信号"><a href="#3-发送shutdown信号" class="headerlink" title="3. 发送shutdown信号"></a>3. 发送<code>shutdown</code>信号</h3><p>  <code>shutdown</code>的默认<code>url</code>为<code>host:port/shutdown</code>，当需要停止服务时，向服务器<code>post</code>该请求即可，如：<br><code>curl -X POST host:port/shutdown</code><br>将得到形如<code>{&quot;message&quot;:&quot;Shutting down, bye...&quot;}</code>的响应</p>
+<h3 id="1-在pom-xml中引入actuator依赖"><a href="#1-在pom-xml中引入actuator依赖" class="headerlink" title="1. 在pom.xml中引入actuator依赖"></a>1. 在<code>pom.xml</code>中引入<code>actuator</code>依赖</h3><pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre><h3 id="2-开启shutdown-endpoint"><a href="#2-开启shutdown-endpoint" class="headerlink" title="2. 开启shutdown endpoint"></a>2. 开启<code>shutdown endpoint</code></h3><p>  <code>Spring Boot Actuator</code>的<code>shutdown endpoin</code>t默认是关闭的，因此在<code>application.properties</code>中开启<code>shutdown endpoint</code>：</p>
+<pre><code>#启用shutdown
+endpoints.shutdown.enabled=true
+#禁用密码验证
+endpoints.shutdown.sensitive=false
+</code></pre><h3 id="3-发送shutdown信号"><a href="#3-发送shutdown信号" class="headerlink" title="3. 发送shutdown信号"></a>3. 发送<code>shutdown</code>信号</h3><p>  <code>shutdown</code>的默认<code>url</code>为<code>host:port/shutdown</code>，当需要停止服务时，向服务器<code>post</code>该请求即可，如：<br><code>curl -X POST host:port/shutdown</code><br>将得到形如<code>{&quot;message&quot;:&quot;Shutting down, bye...&quot;}</code>的响应</p>
 <h3 id="4-安全设置"><a href="#4-安全设置" class="headerlink" title="4. 安全设置"></a>4. 安全设置</h3><p>可以看出，使用该方法可以非常方便的进行远程操作，但是需要注意的是，正式使用时，必须对该请求进行必要的安全设置，比如借助<code>spring-boot-starter-security</code>进行身份认证：</p>
 <ol>
-<li><p>pom.xml添加security依赖</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>开启安全验证<br>在<code>application.properties</code>中变更配置,并</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#开启shutdown的安全验证</span><br><span class="line">endpoints.shutdown.sensitive=true</span><br><span class="line">#验证用户名</span><br><span class="line">security.user.name=admin</span><br><span class="line">#验证密码</span><br><span class="line">security.user.password=secret</span><br><span class="line">#角色</span><br><span class="line">management.security.role=SUPERUSER</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>指定路径、IP、端口</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#指定shutdown endpoint的路径</span><br><span class="line">endpoints.shutdown.path=/custompath</span><br><span class="line">#也可以统一指定所有endpoints的路径`management.context-path=/manage`</span><br><span class="line">#指定管理端口和IP</span><br><span class="line">management.port=8081</span><br><span class="line">management.address=127.0.0.1</span><br></pre></td></tr></table></figure>
-</li>
+<li>pom.xml添加security依赖<pre><code>&lt;dependency&gt;
+ &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+ &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre></li>
+<li>开启安全验证<br>在<code>application.properties</code>中变更配置,并<pre><code>#开启shutdown的安全验证
+endpoints.shutdown.sensitive=true
+#验证用户名
+security.user.name=admin
+#验证密码
+security.user.password=secret
+#角色
+management.security.role=SUPERUSER
+</code></pre></li>
+<li>指定路径、IP、端口<pre><code>#指定shutdown endpoint的路径
+endpoints.shutdown.path=/custompath
+#也可以统一指定所有endpoints的路径`management.context-path=/manage`
+#指定管理端口和IP
+management.port=8081
+management.address=127.0.0.1
+</code></pre></li>
 </ol>
 <h2 id="方式二：部署为Unix-Linux-Service"><a href="#方式二：部署为Unix-Linux-Service" class="headerlink" title="方式二：部署为Unix/Linux Service"></a>方式二：部署为Unix/Linux Service</h2><p>该方式主要借助官方的<code>spring-boot-maven-plugin</code>创建”Fully executable” jar ，这中jar包内置一个shell脚本，可以方便的将该应用设置为Unix/Linux的系统服务(init.d service),官方对该功能在CentOS和Ubuntu进行了测试，对于OS X和FreeBSD,可能需要自定义。具体步骤如下:</p>
-<h3 id="1-在pom-xml中引入插件："><a href="#1-在pom-xml中引入插件：" class="headerlink" title="1. 在pom.xml中引入插件："></a>1. 在<code>pom.xml</code>中引入插件：</h3>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">  &lt;configuration&gt;</span><br><span class="line">    &lt;executable&gt;true&lt;/executable&gt;</span><br><span class="line">  &lt;/configuration&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="2-设置为系统服务"><a href="#2-设置为系统服务" class="headerlink" title="2. 设置为系统服务"></a>2. 设置为系统服务</h3><p>  将你的应用打成jar包，部署到服务器，假设部署路径为/var/app，包名为app.jar，通过如下方式将应该设置为一个系统服务：<br><code>sudo ln -s /var/app/app.jar /etc/init.d/app</code></p>
+<h3 id="1-在pom-xml中引入插件："><a href="#1-在pom-xml中引入插件：" class="headerlink" title="1. 在pom.xml中引入插件："></a>1. 在<code>pom.xml</code>中引入插件：</h3><pre><code>&lt;plugin&gt;
+  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+  &lt;configuration&gt;
+    &lt;executable&gt;true&lt;/executable&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;
+</code></pre><h3 id="2-设置为系统服务"><a href="#2-设置为系统服务" class="headerlink" title="2. 设置为系统服务"></a>2. 设置为系统服务</h3><p>  将你的应用打成jar包，部署到服务器，假设部署路径为/var/app，包名为app.jar，通过如下方式将应该设置为一个系统服务：<br><code>sudo ln -s /var/app/app.jar /etc/init.d/app</code></p>
 <h3 id="3-赋予可执行权限："><a href="#3-赋予可执行权限：" class="headerlink" title="3. 赋予可执行权限："></a>3. 赋予可执行权限：</h3><p><code>chmod u+x app.jar</code></p>
 <h3 id="4-以系统服务的方式管理"><a href="#4-以系统服务的方式管理" class="headerlink" title="4. 以系统服务的方式管理"></a>4. 以系统服务的方式管理</h3><p>  接下来，就可以使用我们熟悉的service foo start|stop|restart来对应用进行启停等管理了<br><code>sudo service app start|stop</code><br>命令将得到形如<code>Started|Stopped [PID]</code>的结果反馈</p>
 <p>默认PID文件路径：/var/run/appname/appname.pid<br>默认日志文件路径：/var/log/appname.log</p>
@@ -427,8 +694,10 @@
 <h3 id="自定义参数"><a href="#自定义参数" class="headerlink" title="自定义参数"></a>自定义参数</h3><p>在这种方式下，我们还可以使用自定义的.conf文件来变更默认配置，方法如下：</p>
 <ol>
 <li>在jar包相同路径下创建一个.conf文件，名称应该与.jar的名称相同，如appname.conf</li>
-<li>在其中配置相关变量，如：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JAVA_HOME=/usr/local/jdk</span><br><span class="line">JAVA_OPTS=-Xmx1024M</span><br><span class="line">LOG_FOLDER=/custom/log</span><br></pre></td></tr></table></figure>
-</li>
+<li>在其中配置相关变量，如：<pre><code>JAVA_HOME=/usr/local/jdk
+JAVA_OPTS=-Xmx1024M
+LOG_FOLDER=/custom/log
+</code></pre></li>
 </ol>
 <h3 id="安全设置"><a href="#安全设置" class="headerlink" title="安全设置"></a>安全设置</h3><p>作为应用服务，安全性是一个不能忽略的问题，如下一些操作可以作为部分基础设置参考：</p>
 <ul>
