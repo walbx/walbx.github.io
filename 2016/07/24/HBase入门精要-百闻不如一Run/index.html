@@ -25,7 +25,7 @@
 <meta property="og:image" content="http://ww2.sinaimg.cn/large/9bd9d3e2gw1f64paypqtyj20ri081gmx.jpg">
 <meta property="og:image" content="http://ww2.sinaimg.cn/mw690/9bd9d3e2gw1f64pb0bqxcj20rr0poadb.jpg">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/9bd9d3e2gw1f64pazfmiaj20mc0ep76l.jpg">
-<meta property="og:updated_time" content="2016-07-24T01:54:52.565Z">
+<meta property="og:updated_time" content="2016-07-24T01:57:09.309Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HBase入门精要--百闻不如一Run">
 <meta name="twitter:description" content="HBase快速入门，HBase基本架构，HBase shell，HBase单机部署，HBase伪分布式部署">
@@ -286,7 +286,7 @@ ga('send', 'pageview');
 </blockquote>
 <ol>
 <li><p>连接：<em>./bin/hbase shell</em></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[hbase@iZ25n0dx8rxZ hbase]<span class="comment"># ./bin/hbase shell</span></span><br><span class="line">HBase Shell; enter <span class="string">'help&lt;RETURN&gt;'</span> <span class="keyword">for</span> list of supported commands.</span><br><span class="line">Type <span class="string">"exit&lt;RETURN&gt;"</span> to leave the HBase Shell</span><br><span class="line">Version 1.2.2, r3f671c1ead70d249ea4598f1bbcc5151322b3a13, Fri Jul  1 08:28:55 CDT 2016</span><br><span class="line">hbase(main):001:0&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[hbase@iZ25n0dx8rxZ hbase]$ ./bin/hbase shell</span><br><span class="line">HBase Shell; enter <span class="string">'help&lt;RETURN&gt;'</span> <span class="keyword">for</span> list of supported commands.</span><br><span class="line">Type <span class="string">"exit&lt;RETURN&gt;"</span> to leave the HBase Shell</span><br><span class="line">Version 1.2.2, r3f671c1ead70d249ea4598f1bbcc5151322b3a13, Fri Jul  1 08:28:55 CDT 2016</span><br><span class="line">hbase(main):001:0&gt;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>建表：<em>create ‘test’, ‘cf1’, ‘cf2’</em>，即[create ‘表名’, ‘列族名’,..]，列族名可以有多个，<em>list</em>用于查看有哪些表</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hbase(main):008:0&gt; create <span class="string">'test'</span>,<span class="string">'cf1'</span>,<span class="string">'cf2'</span></span><br><span class="line">0 row(s) <span class="keyword">in</span> 1.2280 seconds</span><br><span class="line">=&gt; Hbase::Table - <span class="built_in">test</span></span><br><span class="line">hbase(main):009:0&gt;</span><br></pre></td></tr></table></figure>
