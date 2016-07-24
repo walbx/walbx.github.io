@@ -37,10 +37,10 @@
   &quot;row1&quot; : {
     &quot;family1&quot; : {
       &quot;column1&quot; : {
-        111 : &quot;value1&quot;,
-        123 : &quot;value2&quot;
+        timestamp2 : &quot;value1&quot;,
+        timestamp3 : &quot;value2&quot;
         },
-      &quot;column2&quot; : {103 : &quot;value3&quot;}
+      &quot;column2&quot; : {timestamp6 : &quot;value3&quot;}
     },
     &quot;family2&quot; : { ... }
   },
@@ -52,13 +52,13 @@
 <p>而关于其<em>稀疏</em>这一特性，可以用下图来辅助理解：</p>
 <p><img src="http://ww2.sinaimg.cn/mw690/9bd9d3e2gw1f64pb0bqxcj20rr0poadb.jpg" alt="图2 HBase的行和列所构成的更像标签，而不是表格"></p>
 <p><div align="center" style="color:#808080;font-size:12px"><em>图2 HBase的行和列所构成的更像标签，而不是表格</em></div><br>对于我们熟悉的关系型数据库，如MySQL，一张表中每一行都有相同的列，即使部分行的某些列不存储数据，也有消耗，如图中的NULL。而HBase，各行是相对独立的，可以有完全不同的列。</p>
-<h2 id="二-部署"><a href="#二-部署" class="headerlink" title="二.部署"></a>二.部署</h2><p>如果最初阶段你需要HBase环境的主要目的是想熟悉对HBase的CRDU操作，那么看完<em>独立部署</em>后，可以直接跳到<em>三.基本操作</em>。<br>如果希望在部署环境过程中对HBase的架构也做一个简要了解，那么建议进行<em>伪分布式部署</em>；如果伪分布式部署你能够很快完成，那么相信完全的分布式部署对你来说也并不困难，并且本文的主要目的是快速入门，因此不提供完全分布式部署的过程指引，如有需要，请参考官方指南<a href="http://hbase.apache.org/book.html#quickstart_fully_distributed" target="_blank" rel="external">quickstart_fully_distributed</a>。</p>
-<h3 id="0-基础条件"><a href="#0-基础条件" class="headerlink" title="0. 基础条件"></a>0. 基础条件</h3><ul>
+<h2 id="二-部署"><a href="#二-部署" class="headerlink" title="二.部署"></a>二.部署</h2><p>如果最初阶段你需要HBase环境的主要目的是想熟悉对HBase的CRDU操作，那么看完<em>独立部署</em>后，可以直接跳到<em>三.基本操作</em>进行数据库操作。<br>如果希望在部署环境过程中对HBase的架构也做一个简要了解，那么建议进行<em>伪分布式部署</em>；如果伪分布式部署你能够很快完成，那么相信完全的分布式部署对你来说也并不困难，并且本文的主要目的是快速入门，因此不提供完全分布式部署的过程指引，如有需要，请参考官方指南<a href="http://hbase.apache.org/book.html#quickstart_fully_distributed" target="_blank" rel="external">quickstart_fully_distributed</a>。</p>
+<h3 id="0-基础条件"><a href="#0-基础条件" class="headerlink" title="0. 基础条件"></a><strong>0. 基础条件</strong></h3><ul>
 <li>需要Java，支持JDK7和JDK8</li>
 <li>需要ssh，伪分布式部署需要<em>ssh localhost</em>能正常连接，分布式部署需要配置各节点间的无密码登陆(<em>ssh passwordless login</em>)</li>
 </ul>
 <p><em>注：1.0.0版本开始，HBase内部组件(HMaster,HRegionServer)的默认端口从60xxx变更为16xxx</em></p>
-<h3 id="1-独立部署"><a href="#1-独立部署" class="headerlink" title="1. 独立部署"></a>1. 独立部署</h3><blockquote>
+<h3 id="1-独立部署"><a href="#1-独立部署" class="headerlink" title="1. 独立部署"></a><strong>1. 独立部署</strong></h3><blockquote>
 <p>如果想要最快速的搭建供你练习HBase数据库操作的环境，那么这可能是你想要的。<br>独立部署模式下，HBase的所有进程都运行在一个JVM中，数据直接存储在本地磁盘。</p>
 </blockquote>
 <p>a. 下载安装包并解压</p>
@@ -91,7 +91,7 @@ starting master, logging to /usr/local/hbase/bin/../logs/hbase-hbase-master-iZ25
 </code></pre>
 <p>启动日志默认位于<em>./logs/hbase-[username]-master-[yourhostname].log</em>，启动成功后，用<em>jps</em>命令可以看到名为HMaster的进程。接下来，你就可以使用hbase的shell来进行操作练习了。<br>要停止hbase，使用<em>bin/stop-hbase.sh</em>。</p>
 <p>d. UI访问<br>  Hbase内建了一个用Jetty提供服务的web UI页面来查看该HBase环境的各种信息，默认端口16010，尝试用<em><a href="http://hostip:16010/" target="_blank" rel="external">http://hostip:16010/</a></em>来访问。</p>
-<h3 id="2-伪分布式部署"><a href="#2-伪分布式部署" class="headerlink" title="2. 伪分布式部署"></a>2. 伪分布式部署</h3><blockquote>
+<h3 id="2-伪分布式部署"><a href="#2-伪分布式部署" class="headerlink" title="2. 伪分布式部署"></a><strong>2. 伪分布式部署</strong></h3><blockquote>
 <p>伪分布式模式下，HBase的所有组件还是运行在同一台主机，不同的是，每个组件独立运行在不同的JVM。更重要的是，我们可以在该模式下启动多个Regionserver和master，构成一个虚拟的分布式架构以供学习，这是很多<em>快速入门</em>文章所略过的重点。<br>该模式下，可以对接HDFS，但那涉及hadoop的部署，为以更短的时间达到当前阶段的目的，本文仍存储在本地磁盘。</p>
 </blockquote>
 <p><strong>a. HBase架构概要</strong><br><img src="http://ww1.sinaimg.cn/large/9bd9d3e2gw1f64pazfmiaj20mc0ep76l.jpg" alt="图3 HBase架构概要图"></p>
@@ -147,11 +147,21 @@ tcp        0      0 0.0.0.0:2188                0.0.0.0:*                   LIST
 starting master, logging to /usr/local/hbase/bin/../logs/hbase-hbase-1-master-iZ25n0dx8rxZ.out
 </code></pre>
 启动成功后，<em>jps</em>命令可以看到总共有两个HMaster进程。</li>
-<li>端口：<strong>n</strong>用来指定占用的端口号，规则为<strong>[默认端口号+n]</strong>,如例子中的<em>./bin/local-master-backup.sh start 1</em>所启动的HMaster占用16001(工作端口)和16011(web UI服务端口)，以此类推。</li>
-<li>web UI访问：<em><a href="http://ip:1601n/" target="_blank" rel="external">http://ip:1601n/</a></em></li>
-<li>日志：启动日志在<em>./logs/hbase-[username]-n-master-[hostname].log</em>，在上例的日志中，可以看到这样一行日志说明该节点目前是作为备用节点：<pre><code class="bash">master.ActiveMasterManager: Another master is the active master, iz25n0dx8rxz,16000,1469262015657; waiting to become the next active master
+<li><p>端口：<strong>n</strong>用来指定占用的端口号，规则为<strong>[默认端口号+n]</strong>,如例子中的<em>./bin/local-master-backup.sh start 1</em>所启动的HMaster占用16001(工作端口)和16011(web UI服务端口)，以此类推。</p>
+</li>
+<li><p>日志：启动日志在<em>./logs/hbase-[username]-n-master-[hostname].log</em>，在上例的日志中，可以看到这样一行日志说明该节点目前是作为备用节点：</p>
+<pre><code class="bash">master.ActiveMasterManager: Another master is the active master, iz25n0dx8rxz,16000,1469262015657; waiting to become the next active master
+</code></pre>
+<p><strong><em>注意：</em></strong>如果使用1.2.2之前版本的安装包(如1.1.5)，运行启动脚本后backup Master可能会因为端口被占用而无法启动，这是因为脚本里面，没有按照规则更改backup Master的工作端口，启动时仍然使用默认的16000，而该端口已经被前面启动的主节点占用。<strong>可以通过如下方法解决该问题：</strong><br>手动在<em>./bin/local-master-backup.sh</em>脚本中为<em>HBASE_MASTER_ARGS</em>赋值的这句话内添加<em>-D hbase.master.port=`expr 16000 + $DN` \ </em>来设置backup Master的工作端口，添加后这句话的完整内容如下：</p>
+<pre><code class="bash">HBASE_MASTER_ARGS=&quot;\
+-D hbase.master.port=`expr 16000 + $DN` \
+-D hbase.master.info.port=`expr 16010 + $DN` \
+-D hbase.regionserver.port=`expr 16020 + $DN` \
+-D hbase.regionserver.info.port=`expr 16030 + $DN` \
+--backup&quot;
 </code></pre>
 </li>
+<li>web UI访问地址：<em><a href="http://ip:1601n" target="_blank" rel="external">http://ip:1601n</a></em></li>
 <li>主节点切换：要观察HBase的Master组件主节点切换，可以使用<em>kill -9 PID</em>停止当前主节点<em>(即最初启动的HMaster)</em>，此时刚启动的备份节点将切换为主节点，可以在备份节点的日志<em>(./logs/hbase-[username]-1-master-[hostname].log)</em>中看到如下内容：<pre><code class="bash">INFO  [iZ25n0dx8rxZ:16001.activeMasterManager] master.ActiveMasterManager: Deleting ZNode for /hbase/backup-masters/iz25n0dx8rxz,16001,1469267021567 from backup master directory
 INFO  [iZ25n0dx8rxZ:16001.activeMasterManager] master.ActiveMasterManager: Registered Active Master=iz25n0dx8rxz,16001,1469267021567
 </code></pre>
@@ -162,7 +172,7 @@ INFO  [iZ25n0dx8rxZ:16001.activeMasterManager] master.ActiveMasterManager: Regis
 </li>
 <li><strong>启动和停止额外的RegionServer</strong><ul>
 <li>运行额外RegionServer的方式与backup HMaster类似，启动：<em>./bin/local-regionservers.sh start n</em>，停止：<em>./bin/local-regionservers.sh stop n</em></li>
-<li>web UI页面：访问<em><a href="http://ip:1630n/" target="_blank" rel="external">http://ip:1630n/</a></em></li>
+<li>web UI访问地址：<em><a href="http://ip:1630n" target="_blank" rel="external">http://ip:1630n</a></em></li>
 </ul>
 </li>
 </ul>
