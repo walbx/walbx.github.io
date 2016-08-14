@@ -4,6 +4,269 @@
   
     
     <entry>
+      <title><![CDATA[Storm应用实例--集成HBase]]></title>
+      <url>http://www.aloo.me/2016/08/14/%E5%9C%A8Storm%E4%B8%AD%E6%93%8D%E4%BD%9CHBase/</url>
+      <content type="html"><![CDATA[<p><div align="center"><img src="http://ww1.sinaimg.cn/bmiddle/9bd9d3e2gw1f6tdpgrrp3j20fp08eq3s.jpg" alt=""></div></p>
+<blockquote>
+<p>本文展示一个Storm的topology，该topology对给定的词源进行词频统计，然后存入HBase，该实例不借助storm-hbase包，而是直接使用hbase client来完成对HBase的操作。</p>
+</blockquote>
+<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>由Twitter开源的、分布式实时计算系统<a href="http://storm.apache.org/" target="_blank" rel="external">Apache Storm</a>，如今已被多家知名企业应用于实时分析、流式计算、在线机器学习、分布式RPC调用、ETL等领域，甚至有看到“Storm之于实时计算，就像Hadoop之于数据批处理”这样的评价，是否言过其实，这里暂且不论，但至少已经看到业界对Storm在实时计算领域的肯定，加之其开源特性，必然会得到更广泛的应用。<br>在Storm的实际应用中，在topology中将经过处理的数据通过<a href="http://hbase.apache.org/" target="_blank" rel="external">HBase</a>进行持久化，是一个常见的需求。Storm官方提供了storm-hbase，包含一些比较通用的API及其简单实现，可以查看对应的官方文档来了解基本使用方法：<a href="http://storm.apache.org/releases/current/storm-hbase.html" target="_blank" rel="external">storm-hbase</a>。但如果你需要进行一些更复杂的处理，或者希望对自己的代码有更多的掌控，那么脱离storm-hbase，直接使用HBase的Java API来完成操作，将是一个不错的选择。本文将展示的，就是一个在Storm的topology中直接使用HBase Java API操作HBase的简单示例。</p>
+<h2 id="零-示例简述"><a href="#零-示例简述" class="headerlink" title="零.示例简述"></a>零.示例简述</h2><p>本项目数据源部分直接借用Storm词频统计的官方示例，在WordSpout.java中从静态字符串数组中读取单词，在WordCounterBolt.java中统计单词出现的次数，最后在MyHBaseBolt.java中将单词及其出现的次数写入到HBase。</p>
+<h2 id="一-环境信息"><a href="#一-环境信息" class="headerlink" title="一.环境信息"></a>一.环境信息</h2><p>示例的测试环境：</p>
+<ul>
+<li>Java 8</li>
+<li>Storm 1.0.1</li>
+<li>HBase 1.2.2</li>
+<li>Hadoop 2.6.4</li>
+<li>Maven 3.3.3</li>
+</ul>
+<h2 id="二-创建项目"><a href="#二-创建项目" class="headerlink" title="二.创建项目"></a>二.创建项目</h2><p>示例直接使用hbase client操作HBase，因此关键的依赖只有storm和hbase client，项目pom.xml:</p>
+<pre><code class="xml">&lt;properties&gt;
+  &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+  &lt;storm.version&gt;1.0.1&lt;/storm.version&gt;
+  &lt;!-- 开发调试时配置为compile，topology打包时配置为provided --&gt;
+  &lt;storm.scope&gt;compile&lt;/storm.scope&gt;
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.storm&lt;/groupId&gt;
+        &lt;artifactId&gt;storm-core&lt;/artifactId&gt;
+        &lt;version&gt;${storm.version}&lt;/version&gt;
+        &lt;scope&gt;${storm.scope}&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.hbase&lt;/groupId&gt;
+        &lt;artifactId&gt;hbase-client&lt;/artifactId&gt;
+        &lt;version&gt;1.2.2&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<p>项目结构：</p>
+<pre><code>--src
+   --main
+       --java
+          --bolt
+              --MyHBaseBolt.java
+              --WordCounterBolt.java
+          --spout
+              --WordSpout.java
+          --HBaseTopology.java
+       --resources
+           --hbase-site.xml
+</code></pre><p>其中hbase-site.xml直接使用HBase服务器上面的hbase-site.xml即可。本示例的HBase集群使用独立的zookeeper集群，zk的端口使用了默认端口，因此不需要在hbase-site.xml中显式配置，详细内容见附录。</p>
+<h2 id="三-词频统计"><a href="#三-词频统计" class="headerlink" title="三.词频统计"></a>三.词频统计</h2><p>这部分直接借用一个Storm官方示例：WordSpout.java从静态数组中随机读取单词并向外发射，WordCounterBolt接收来自WordSpout的包含一个个单词的tuple，对每个单词出现的次数进行统计，然后将每个单词及其对应的计数向外发射。为快速进入主题，这部分代码放在附录中。</p>
+<h2 id="四-HBase操作"><a href="#四-HBase操作" class="headerlink" title="四.HBase操作"></a>四.HBase操作</h2><p>在java中通过hbase client对hbase进行读写大体有如下步骤：</p>
+<ul>
+<li>创建HBaseConfiguration对象，该对象可以读取CLASSPATH下的hbase-site.xml文件的内容。<br><code>Configuration config = HBaseConfiguration.create();</code></li>
+<li>用前面的config对象为入参创建Connection对象来连接至目标HBase集群。connection对象对资源消耗较大，应该避免创建过多的实例。使用完毕后，调用connection的close()方法关闭连接，建议使用try/finally来确保连接的关闭。<br><code>Connection connection = ConnectionFactory.createConnection(config);</code></li>
+<li>以指定的table名称(应该是已存在的)为入参创建Table对象来连接指定的表。使用完毕后，需要调用table的close()方法进行关闭。与connection不同，table对象是轻量的，对table对象的创建，不需要像connection那样小心，当然，这并不是鼓励你创建得越多越好。<br><code>Table table = connection.getTable(TableName.valueOf(&quot;WordCount&quot;));</code></li>
+<li>以指定的row key(可以是在HBase中还不存在的)为入参创建Put对象来持有要写入的数据。<br><code>Put p = new Put(Bytes.toBytes(&quot;key&quot;));</code></li>
+<li>调用Put对象的addColumn方法，接受列族名称(column family)、列名(column qualifier)和要写入的值作为参数。可以多次调用该方法让put对象持有一定数量的数据后，再一次性提交。<br><code>put.addColumn(Bytes.toBytes(&quot;cf&quot;), Bytes.toBytes(&quot;words&quot;), Bytes.toBytes(&quot;word&quot;));</code></li>
+<li>以Put对象为入参，调用table的put方法来提交要写入hbase的数据</li>
+<li>关闭table</li>
+<li>关闭connection</li>
+</ul>
+<p>在Storm的bolt中进行实际应用：</p>
+<pre><code class="java">public class MyHBaseBolt extends BaseBasicBolt {
+    private Connection connection;
+    private Table table;
+
+    @Override
+    public void prepare(Map stormConf, TopologyContext context) {
+        Configuration config = HBaseConfiguration.create();
+        try {
+            connection = ConnectionFactory.createConnection(config);
+//示例都是对同一个table进行操作，因此直接将Table对象的创建放在了prepare，在bolt执行过程中可以直接重用。
+            table = connection.getTable(TableName.valueOf(&quot;WordCount&quot;));
+        } catch (IOException e) {
+            //do something to handle exception
+        }
+    }
+    @Override
+    public void execute(Tuple tuple, BasicOutputCollector basicOutputCollector) {
+        //从tuple中获取单词
+        String word = tuple.getString(0);
+        //从tuple中获取计数，这里转换为String只是为了示例运行后存入hbase的计数值能够直观显示。
+        String count = tuple.getInteger(1).toString();
+        try {
+            //以各个单词作为row key
+            Put put = new Put(Bytes.toBytes(word));
+            //将被计数的单词写入cf:words列
+            put.addColumn(Bytes.toBytes(&quot;cf&quot;), Bytes.toBytes(&quot;words&quot;), Bytes.toBytes(word));
+            //将单词的计数写入cf:counts列
+            put.addColumn(Bytes.toBytes(&quot;cf&quot;), Bytes.toBytes(&quot;counts&quot;), Bytes.toBytes(count));
+            table.put(put);
+        } catch (IOException e) {
+            //do something to handle exception
+        }
+    }
+    @Override
+    public void cleanup() {
+        //关闭table
+        try {
+            if(table != null) table.close();
+        } catch (Exception e){
+            //do something to handle exception
+        } finally {
+            //在finally中关闭connection
+            try {
+                connection.close();
+            } catch (IOException e) {
+                //do something to handle exception
+            }
+        }
+    }
+    @Override
+    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+        //示例中本bolt不向外发射数据，所以没有再做声明
+    }
+}
+</code></pre>
+<p>虽然可能应用场景相对较少，但还是附带介绍一下从HBase读取数据：</p>
+<ul>
+<li>以指定的row key为入参创建Get对象<br><code>Get get = new Get(Bytes.toBytes(&quot;key&quot;));</code></li>
+<li>以Get实例为入参调用table的get方法来获取结果集对象Result<br><code>Result r = table.get(get);</code></li>
+<li>从结果集中获取制定列的值<br><code>byte[] value = r.getValue(Bytes.toBytes(&quot;cf&quot;), Bytes.toBytes(&quot;words&quot;));</code></li>
+<li><p>也可以使用scan来批量读取，Scanner实现了Iterable，因此可以使用foreach来进行遍历:</p>
+<pre><code class="java">Scan scan = new Scan();
+//获取指定列族所有列的数据
+scan.addFamily(Bytes.toBytes(&quot;cf&quot;));
+ResultScanner scanner = table.getScanner(scan);
+try {
+  for (Result r : scanner) {...}
+}finally{
+  scanner.close();
+  }
+</code></pre>
+<h2 id="五-Topology"><a href="#五-Topology" class="headerlink" title="五.Topology"></a>五.Topology</h2><p>topology中唯一需要注意的是，在Windows测试该示例时，需要配置hadoop.home.dir属性，并确保将winutils.exe客户端(<a href="http://pan.baidu.com/s/1qWlCseK" target="_blank" rel="external">示例中使用的版本(链接若失效请自助)</a>)放置在所配置的hadoop.home.dir目录下(资料解释:在hadoop 2.x版本的包中不再包含winutils.exe文件)。<br>HBaseTopology.java：</p>
+<pre><code class="java">public class PersistentWordCount {
+  private static final String WORD_SPOUT = &quot;WORD_SPOUT&quot;;
+  private static final String COUNT_BOLT = &quot;COUNT_BOLT&quot;;
+  private static final String HBASE_BOLT = &quot;HBASE_BOLT&quot;;
+
+  public static void main(String[] args) throws Exception {
+      System.setProperty(&quot;hadoop.home.dir&quot;,&quot;E:/BaiduYunDownload&quot;);
+
+      Config config = new Config();
+
+      WordSpout spout = new WordSpout();
+      WordCounter bolt = new WordCounter();
+      MyHBaseBolt hbase = new MyHBaseBolt();
+
+      // wordSpout ==&gt; countBolt ==&gt; HBaseBolt
+      TopologyBuilder builder = new TopologyBuilder();
+
+      builder.setSpout(WORD_SPOUT, spout, 1);
+      builder.setBolt(COUNT_BOLT, bolt, 1).shuffleGrouping(WORD_SPOUT);
+      builder.setBolt(HBASE_BOLT, hbase, 10).fieldsGrouping(COUNT_BOLT, new Fields(&quot;word&quot;));
+
+      if (args.length == 0) {
+          LocalCluster cluster = new LocalCluster();
+          cluster.submitTopology(&quot;word&quot;, config, builder.createTopology());
+          Thread.sleep(10000);
+          cluster.killTopology(&quot;word&quot;);
+          cluster.shutdown();
+          System.exit(0);
+      } else {
+          config.setNumWorkers(3);
+          StormSubmitter.submitTopology(args[0], config, builder.createTopology());
+      }
+}
+</code></pre>
+<p>如果编译遇到类似：<code>java.io.IOException: No FileSystem for scheme: hdfs</code>这样关于hadoop的问题，可能需要添加hadoop相关依赖包，如：</p>
+<pre><code class="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.hadoop&lt;/groupId&gt;
+  &lt;artifactId&gt;hadoop-common&lt;/artifactId&gt;
+  &lt;version&gt;2.6.4&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.hadoop&lt;/groupId&gt;
+  &lt;artifactId&gt;hadoop-hdfs&lt;/artifactId&gt;
+  &lt;version&gt;2.6.4&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+</li>
+</ul>
+<h2 id="六-总结"><a href="#六-总结" class="headerlink" title="六.总结"></a>六.总结</h2><p>本文通过一个词频统计后通过HBase进行结果持久化的topology示例，展示了如何在Storm的中直接使用HBase的java api来实现基本的读写操作，希望能为想自己完成Storm的HBase集成而不得其法的朋友提供一个入门指引。</p>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><ol>
+<li><p>WordSpout.java:</p>
+<pre><code class="java">public class WordSpout extends BaseRichSpout {
+ private SpoutOutputCollector collector;
+ private static final String[] MSGS = new String[]{
+         &quot;Storm&quot;, &quot;HBase&quot;, &quot;Integration&quot;, &quot;example&quot;, &quot;by &quot;, &quot;aloo&quot;, &quot;in&quot;, &quot;Aug&quot;,
+ };
+
+ private static final Random random = new Random();
+
+ @Override
+ public void declareOutputFields(OutputFieldsDeclarer declarer) {
+     declarer.declare(new Fields(&quot;word&quot;));
+ }
+
+ @Override
+ public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+     this.collector = collector;
+ }
+
+ @Override
+ public void nextTuple() {
+     String word = MSGS[random.nextInt(8)];
+     collector.emit(new Values(word));
+ }
+}
+</code></pre>
+</li>
+<li><p>WordCounterBolt.java:</p>
+<pre><code class="java">public class WordCounter extends BaseBasicBolt {
+ private Map&lt;String, Integer&gt; _counts = new HashMap&lt;String, Integer&gt;();
+
+ @Override
+ public void execute(Tuple tuple, BasicOutputCollector collector) {
+     String word = tuple.getString(0);
+     int count;
+     if(_counts.containsKey(word)){
+         count = _counts.get(word);
+     } else {
+         count = 0;
+     }
+     count ++;
+     _counts.put(word, count);
+     collector.emit(new Values(word, count));
+ }
+ @Override
+ public void declareOutputFields(OutputFieldsDeclarer declarer) {
+     declarer.declare(new Fields(&quot;word&quot;, &quot;count&quot;));
+ }
+}
+</code></pre>
+</li>
+<li>hbase-site.xml<pre><code class="xml">&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;
+&lt;configuration&gt;
+ &lt;property&gt;
+     &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
+     &lt;value&gt;true&lt;/value&gt;
+ &lt;/property&gt;
+ &lt;property&gt;
+     &lt;name&gt;hbase.rootdir&lt;/name&gt;
+     &lt;value&gt;hdfs://xxx.xx.xx.xx:9000/hbase&lt;/value&gt;
+ &lt;/property&gt;
+ &lt;property&gt;
+     &lt;name&gt;hbase.zookeeper.property.dataDir&lt;/name&gt;
+     &lt;value&gt;/home/hadoop/hbase/storm/zookeeper&lt;/value&gt;
+ &lt;/property&gt;
+ &lt;property&gt;
+     &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
+     &lt;value&gt;zknode1,zdnode2,zknode3&lt;/value&gt;
+&lt;/configuration&gt;
+</code></pre>
+</li>
+</ol>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[性能测试中服务器关键性能指标浅析]]></title>
       <url>http://www.aloo.me/2016/08/01/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E4%B8%AD%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%85%B3%E9%94%AE%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E6%B5%85%E6%9E%90/</url>
       <content type="html"><![CDATA[<p><img src="http://ww2.sinaimg.cn/large/9bd9d3e2gw1f6df9vs0ojj20f406w76x.jpg" alt=""></p>
