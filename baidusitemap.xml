@@ -4,7 +4,7 @@
     
   <url>
     <loc>http://www.aloo.me/2016/08/19/JMeter3-0%E5%9B%BE%E5%BD%A2%E5%8C%96HTML%E6%8A%A5%E5%91%8A%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/</loc>
-    <lastmod>2016-08-19T08:35:33.936Z</lastmod>
+    <lastmod>2016-08-19T08:41:11.365Z</lastmod>
     <data>
         <display>
         <title>JMeter3.0图形化HTML报告中文乱码问题处理</title>
@@ -32,9 +32,9 @@
         <title>Storm应用实例--集成HBase</title>
         <pubTime>2016-08-14T09:01:54.000Z</pubTime>
         
-        <tag>Storm </tag>
-         
         <tag>大数据 </tag>
+         
+        <tag>Storm </tag>
          
          
            
@@ -74,9 +74,9 @@
         <title>HBase入门精要--百闻不如一Run</title>
         <pubTime>2016-07-24T00:43:27.000Z</pubTime>
         
-        <tag>大数据 </tag>
-         
         <tag>HBase </tag>
+         
+        <tag>大数据 </tag>
          
         <tag>NoSQL </tag>
          

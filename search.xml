@@ -26,10 +26,10 @@
 <pre><code class="java">private static final String CHARSET = SaveService.getFileEncoding(StandardCharsets.UTF_8.displayName());
 </code></pre>
 <p>编译后替换即可。saveservice.properties文件的_file_encoding默认已配置为UTF-8，多数情况下，我们不需要修改。</p>
-<h3 id="文件分享"><a href="#文件分享" class="headerlink" title="文件分享"></a>文件分享</h3><p>分享的文件和jar包是使用推荐方案进行处理。可以去用class文件自己替换进本地的ApacheJMeter_core.jar，也可以直接下载分享的jar包替换本地jar包。</p>
+<h3 id="文件分享"><a href="#文件分享" class="headerlink" title="文件分享"></a>文件分享</h3><p>分享的文件和jar包是使用推荐方案进行处理。可以取用class文件自己替换进本地的ApacheJMeter_core.jar，也可以直接下载分享的jar包替换本地对应jar包。</p>
 <ul>
-<li>编译好的.class文件：<code>https://pan.baidu.com/s/1bo10QnX</code>，提取码<code>ee68</code></li>
-<li>处理完成的ApacheJMeter_core.jar： <code>https://pan.baidu.com/s/1mhKLwgw</code>，提取码<code>id7h</code></li>
+<li>单独的CsvSampleReader.class文件：<code>https://pan.baidu.com/s/1bo10QnX</code>，提取码<code>ee68</code></li>
+<li>处理完毕的ApacheJMeter_core.jar： <code>https://pan.baidu.com/s/1mhKLwgw</code>，提取码<code>id7h</code></li>
 </ul>
 <p><em>注：github上可以看到jmeter的trunk分支已经将dashboard report的默认字符编码更改为UFT-8，本文的推荐方案即是官方更新中的实现方式。只是目前官方还没有发布更新，所以自己动手。</em></p>
 <h2 id="三-成因分析"><a href="#三-成因分析" class="headerlink" title="三. 成因分析"></a>三. 成因分析</h2><p>Dashboard Report特性生成HTML图表，使用JMeter记录测试结果数据的文件<em>(命令行执行时<code>-l</code>指定的文件，也可在图形界面的监听器中指定，作为基础知识不在这里展开)</em>作为数据源，Apache FreeMarker作为模板引擎，默认的模板位于JMETER_HOME\bin\report-template。</p>
