@@ -788,6 +788,7 @@ jmeter.save.saveservice.timestamp_format = yyyy/MM/dd HH:mm:ss
 </ul>
 <p>两个样例都会在\apache-jmeter-3.0\bin\output目录下产生如下文件(夹):<br><img src="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x043a8xuj20if03vdgd.jpg" alt=""></p>
 <p>用浏览器打开index.html文件，即可查看各种图形化报告:<br><img src="http://ww4.sinaimg.cn/large/9bd9d3e2gw1f5x04glvcqj20ki0cm3zr.jpg" alt=""><br><img src="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x0ao5dkjj212u0fqjvr.jpg" alt=""></p>
+<p>注：在3.0版本，由于字符编码问题，可能会遇到生成的报告中，中文标签展示为乱码的问题，因篇幅限制，解决办法请<a href="http://www.aloo.me/2016/08/19/JMeter3-0%E5%9B%BE%E5%BD%A2%E5%8C%96HTML%E6%8A%A5%E5%91%8A%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/">戳这里</a>看我另一篇文章。</p>
 <h2 id="四-自定义配置"><a href="#四-自定义配置" class="headerlink" title="四.自定义配置"></a>四.自定义配置</h2><p>JMeter3.0在bin目录新增了<code>reportgenerator.properties</code>文件保存了所有关于图形化HTML报告生成模块的默认配置，要变更配置，建议不要直接编辑该文件，而是推荐在<code>user.properties</code>中去配置和覆盖。</p>
 <h3 id="1-总体配置"><a href="#1-总体配置" class="headerlink" title="1.总体配置"></a>1.总体配置</h3><p>总体配置都是以<code>jmeter.reportgenerator.</code>为前缀。如：jmeter.reportgenerator.overall_granularity=60000</p>
 <ul>
