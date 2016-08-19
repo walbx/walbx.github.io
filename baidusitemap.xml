@@ -3,6 +3,28 @@
 
     
   <url>
+    <loc>http://www.aloo.me/2016/08/19/JMeter3-0%E5%9B%BE%E5%BD%A2%E5%8C%96HTML%E6%8A%A5%E5%91%8A%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/</loc>
+    <lastmod>2016-08-19T08:35:33.936Z</lastmod>
+    <data>
+        <display>
+        <title>JMeter3.0图形化HTML报告中文乱码问题处理</title>
+        <pubTime>2016-08-19T08:08:49.000Z</pubTime>
+        
+        <tag>性能测试 </tag>
+         
+        <tag>JMeter </tag>
+         
+         
+           
+             
+              <breadCrumb title="技能锻造室" url="http://www.aloo.me/categories/%E6%8A%80%E8%83%BD%E9%94%BB%E9%80%A0%E5%AE%A4/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://www.aloo.me/2016/08/14/%E5%9C%A8Storm%E4%B8%AD%E6%93%8D%E4%BD%9CHBase/</loc>
     <lastmod>2016-08-14T09:13:41.617Z</lastmod>
     <data>
@@ -10,9 +32,9 @@
         <title>Storm应用实例--集成HBase</title>
         <pubTime>2016-08-14T09:01:54.000Z</pubTime>
         
-        <tag>大数据 </tag>
-         
         <tag>Storm </tag>
+         
+        <tag>大数据 </tag>
          
          
            
@@ -52,9 +74,9 @@
         <title>HBase入门精要--百闻不如一Run</title>
         <pubTime>2016-07-24T00:43:27.000Z</pubTime>
         
-        <tag>HBase </tag>
-         
         <tag>大数据 </tag>
+         
+        <tag>HBase </tag>
          
         <tag>NoSQL </tag>
          
@@ -99,9 +121,9 @@
         <title>Dubbo高级特性实践-泛化调用</title>
         <pubTime>2016-07-10T06:24:24.000Z</pubTime>
         
-        <tag>Dubbo </tag>
-         
         <tag>微服务 </tag>
+         
+        <tag>Dubbo </tag>
          
          
            
@@ -143,9 +165,9 @@
         <title>正确、安全地停止SpringBoot应用</title>
         <pubTime>2016-06-27T08:35:29.000Z</pubTime>
         
-        <tag>微服务 </tag>
-         
         <tag>Spring Boot </tag>
+         
+        <tag>微服务 </tag>
          
          
            
