@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>Locust性能测试实施细节 | Luo&#39;s Blog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="性能测试,Locust," />
+  
+
+  <meta name="description" content="Locust，性能测试，Locust断言，Locust分布式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Locust性能测试实施细节">
+<meta property="og:url" content="http://www.aloo.me/2017/04/09/Locust性能测试实施细节/index.html">
+<meta property="og:site_name" content="Luo's Blog">
+<meta property="og:description" content="Locust，性能测试，Locust断言，Locust分布式">
+<meta property="og:image" content="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fegq140omij20ox07iq46.jpg">
+<meta property="og:image" content="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fegq1klu2ej20oq0jatae.jpg">
+<meta property="og:updated_time" content="2017-04-09T13:00:20.503Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Locust性能测试实施细节">
+<meta name="twitter:description" content="Locust，性能测试，Locust断言，Locust分布式">
+<meta name="twitter:image" content="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fegq140omij20ox07iq46.jpg">
+
+  
+
+  
+    <link rel="icon" href="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5scw4o8tnj206t06sdgf.jpg">
+  
+
+  <link href="/css/styles.css?v=028c63b1" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-79979510-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?da576f05e763e7049e80f64294de0bde";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  <link href="http://cdn.staticfile.org/highlight.js/9.0.0/styles/solarized-light.min.css" rel="stylesheet">  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">导航</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">导航</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#v0-8a2"><span class="toc-text">v0.8a2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#指定Web-host"><span class="toc-text">指定Web host</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#断言"><span class="toc-text">断言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Json解析"><span class="toc-text">Json解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义标签"><span class="toc-text">自定义标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分布式运行"><span class="toc-text">分布式运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-Locust性能测试实施细节" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">Locust性能测试实施细节</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.04.09</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>Luo</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/技能锻造室/">技能锻造室</a>
+  </span>
+
+
+
+      
+
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>当我们做Web系统性能测试方案时，压力模拟工具的选择通常是一个绕不开的环节。对于大部分互联网公司的业务规模和测试资源投入，JMeter这个老牌开源性能测试工具能够满足大部分测试需求，它也可能是世面上书籍、博客教程丰富程度仅次于LoadRunner的性能测试工具。然而当我们的场景需要模拟的并发用户数以千为单位时，使用JMeter的成本越来越大，甚至超出我们掌握的资源。此时，我们开始寻找更低成本的方案，而<a href="http://locust.io/" target="_blank" rel="external">Locust</a>，为这样的方案带来了一种可能。</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Locust是开源、使用Python开发、基于事件、支持分布式并且提供Web UI进行测试执行和结果展示的性能测试工具。而它之所以能够在资源占用方面明显优于JMeter，一个关键点在于两者模拟虚拟用户的方式不同，JMeter通过线程来作为虚拟用户，而Locust借助gevent库对协程的支持，以greenlet来实现对用户的模拟，相同配置下Locust能支持的并发用户数相比JMeter可以达到一个数量级的提升。<br>        Locust使用Python代码定义测试场景，目前支持Python 2.7, 3.3, 3.4, 3.5, 和3.6。它自带一个Web UI,用于定义用户模型，发起测试，实时测试数据，错误统计等，在最新未正式发布的v0.8a2(当前最新发布版本v0.8a1)，还提供QPS、评价响应时间等几个简单的图表。</p>
+<p><img src="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fegq140omij20ox07iq46.jpg" alt="Summary Report"></p>
+<p><img src="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fegq1klu2ej20oq0jatae.jpg" alt="Charts"></p>
+<p>本文不会介绍Locust最基础的部署、运行等Quick start式内容，这部分内容请直接参照<a href="http://docs.locust.io/en/latest/quickstart.html" target="_blank" rel="external">官网Quick start</a>或者搜索Locust入门的博客，本文主要介绍一些目前网络上还比较缺少的，真正要用Locust来做Web系统性能测试时通常需要用到的内容或者可能遇到的问题</p>
+<h2 id="v0-8a2"><a href="#v0-8a2" class="headerlink" title="v0.8a2"></a>v0.8a2<a id="a2"></a></h2><p>如前文所说，当前官方最新发布的版本为v0.8a1，还不包含图表特性，而在官方Github上已经在v0.8a2完成了图表特性的合并，想要提前体验可以直接从Github获取master分支的代码，覆盖<code>[PythonHome]\Lib\site-packages</code>中的locust目录即可。</p>
+<h2 id="指定Web-host"><a href="#指定Web-host" class="headerlink" title="指定Web host"></a>指定Web host</h2><p>在Linux系统多网卡情况下，Locust自动选择网卡时可能会遇到<code>error: [Errno 97] Address family not supported by protocol</code>错误,此时可以通过直接指定web host来解决问题，使用选项<code>--web-host</code>来指定可用的地址，例：</p>
+<pre><code>locust -f xxx.py --web-host=127.0.0.1
+locust -f xxx.py --web-host=192.168.1.2
+locust -f xxx.py --web-host=localhost
+</code></pre><h2 id="断言"><a href="#断言" class="headerlink" title="断言"></a>断言</h2><p>当我们没有自定义断言时，测试请求结果的状态(success/fail)取决于Http请求是否有异常出现，而在对我们的Web系统实施性能测试时，当我们需要更准确的业务成功率数据时，就需要通过对响应状态码、Response body等数据进行校验来给出结果，此时，可以通过ResponseContextManager来实现。首先在场景代码的发起请求参数中通过<code>catch_response=True</code>来捕获响应数据，然后对响应数据进行校验，最后使用success()/failure()两个方法来标识请求结果的状态。例：</p>
+<pre><code>from locust import HttpLocust, TaskSet,task
+class UserBehavior(TaskSet):
+    @task(2)
+    def foo(self):
+        with self.client.get(&quot;/&quot;, catch_response=True) as response:
+            if response.status_code == 200:
+                response.success()
+        @task(1)
+         def bar(self):
+                reqBody = &#39;{&quot;username&quot;:&quot;ellen_key&quot;, &quot;password&quot;:&quot;education&quot;}&#39;
+                with self.client.post(&quot;/login&quot;, reqBody, catch_response=True) as response: 
+                        if response.content == &quot;&quot;:
+                                response.failure(&quot;No data&quot;)
+class WebsiteUser(HttpLocust):
+    task_set = UserBehavior
+    host = &quot;http://foo.bar.com&quot;
+    min_wait = 0
+    max_wait = 0
+</code></pre><h2 id="Json解析"><a href="#Json解析" class="headerlink" title="Json解析"></a>Json解析</h2><p>Json作为一种轻量级的数据交换格式，以及被如今的互联网系统广泛采用。上一节的示例中，我们使用content获取完整的响应内容，实际测试实施中，对于动态的响应结果，可能更多的采用校验关键字段的方式对于Json格式的响应数据，要获取特定字段的值，可以直接使用内置的Json解析实现，例：<br>对于如下的响应结果：</p>
+<pre><code>{
+  &#39;code&#39;:0,
+  &#39;data&#39;:[
+        {
+          &#39;id&#39;:123
+        }
+  ]
+}
+</code></pre><p>可以通过如下方式获取其中的关键数据：</p>
+<pre><code>with self.client.post(&quot;/login&quot;, reqBody, catch_response=True) as response: 
+    json_resp = response.json()
+    code = json_resp[&quot;code&quot;]
+    data_len = len(json_resp[&quot;data&quot;])
+    id = json_resp[&quot;data&quot;][0][&quot;id&quot;]
+</code></pre><h2 id="自定义标签"><a href="#自定义标签" class="headerlink" title="自定义标签"></a>自定义标签</h2><p>从简介的Summary report图中可以看到，Locust的结果展示中，请求的默认名称是url的path部分，而为了报告更直观，或者当同一个业务有动态的path(如/user/[userid])，需要聚合时，可以通过<code>name</code>参数来自定义标签实现,例：</p>
+<pre><code>with  self.client.get(&quot;/account/{accountID}&quot;, catch_response=True, name = &quot;getAccount&quot;) as resp:
+</code></pre><h2 id="分布式运行"><a href="#分布式运行" class="headerlink" title="分布式运行"></a>分布式运行</h2><p>Locust的分布式运行，master和slave节点都需要有场景脚本，分别以如下命令启动：</p>
+<ul>
+<li>master:<code>locust -f locustfile.py --master --web-host=x.x.x.x</code></li>
+<li>slave:<code>locust -f locustfile.py --slave --master-host=x.x.x.x</code><br>master节点将运行Locust的Web UI服务，不会承担任何施压任务(不会模拟虚拟用户)。<br>如前面的简介，Locust模拟并发用户是使用协程，也因此对于多核CPU的服务器，为良好的利用多核能力，<strong>建议一台slave服务器运行与CPU核数相当的slave</strong>。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Locust作为一个年轻的、轻量级的性能测试工具，网络上相关的应用文献特别是中文文献相对较少，而且多数是Quick start式的指引，对于一些实施的细节信息还比较欠缺，本文根据作者的实际应用经验，列举了部分使用细节，希望能为需要的朋友提供一点有用的信息。</p>
+
+    
+  </div>
+</article>
+
+</div>
+
+
+
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+  <section class="duoshuo-comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="" data-title="Locust性能测试实施细节" data-url="http://www.aloo.me/2017/04/09/Locust性能测试实施细节/index.html"></div>
+    <!-- 多说评论框 end -->
+  </section>
+
+
+
+
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"aloo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+  </script>
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+  <script src="http://cdn.staticfile.org/highlight.js/9.0.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
