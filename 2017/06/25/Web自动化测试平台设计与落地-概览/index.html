@@ -29,7 +29,7 @@
 <meta property="og:image" content="http://wx3.sinaimg.cn/large/9bd9d3e2gy1fgxa7lmvtoj20sv0bdq4b.jpg">
 <meta property="og:image" content="http://wx1.sinaimg.cn/large/9bd9d3e2gy1fgxa7lx4djj20zq0a2wgz.jpg">
 <meta property="og:image" content="http://wx3.sinaimg.cn/mw690/9bd9d3e2gy1fgxa7mo39fj20m50i7glz.jpg">
-<meta property="og:updated_time" content="2017-06-25T05:09:18.295Z">
+<meta property="og:updated_time" content="2017-06-25T07:20:03.492Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Web自动化测试平台设计与落地-概览">
 <meta name="twitter:description" content="接口测试，自动化测试，测试平台">
@@ -144,7 +144,7 @@ ga('send', 'pageview');
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一、目标和定位"><span class="toc-text">一、目标和定位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、平台特点"><span class="toc-text">二、平台特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、系统架构"><span class="toc-text">三、系统架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、相关技术栈"><span class="toc-text">四、相关技术栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、UI概览"><span class="toc-text">五、UI概览</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一、目标和定位"><span class="toc-text">一、目标和定位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、平台特点"><span class="toc-text">二、平台特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、系统架构"><span class="toc-text">三、系统架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、相关技术栈"><span class="toc-text">四、相关技术栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、UI概览"><span class="toc-text">五、UI概览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、待完善部分"><span class="toc-text">六、待完善部分</span></a></li></ol>
   </div>
 
 
@@ -299,6 +299,14 @@ ga('send', 'pageview');
 <p>关于在线代码编辑，主要提供给有基础代码能力的同学应用在复杂场景的自动化实施，普通的接口自动化需求不需要。后续文章会做更多的说明。</p>
 <h2 id="五、UI概览"><a href="#五、UI概览" class="headerlink" title="五、UI概览"></a>五、UI概览</h2><p><img src="http://wx4.sinaimg.cn/large/9bd9d3e2gy1fgxa7j5javj20ni0g3mz2.jpg" alt="基础信息管理"></p>
 <div align="center" style="color:#808080;font-size:12px"><em>基础信息管理</em></div><br><img src="http://wx2.sinaimg.cn/large/9bd9d3e2gy1fgxa7jwlzpj20os0i3gnt.jpg" alt="用例管理"><br><div align="center" style="color:#808080;font-size:12px"><em>用例管理</em></div><br><img src="http://wx2.sinaimg.cn/large/9bd9d3e2gy1fgxa7krk21j20ni0bfjsz.jpg" alt="定时计划管理"><br><div align="center" style="color:#808080;font-size:12px"><em>定时计划管理</em></div><br><img src="http://wx3.sinaimg.cn/large/9bd9d3e2gy1fgxa7lmvtoj20sv0bdq4b.jpg" alt="用例调试"><br><div align="center" style="color:#808080;font-size:12px"><em>用例调试</em></div><br><img src="http://wx1.sinaimg.cn/large/9bd9d3e2gy1fgxa7lx4djj20zq0a2wgz.jpg" alt="在线报告"><br><div align="center" style="color:#808080;font-size:12px"><em>在线报告</em></div><br><img src="http://wx3.sinaimg.cn/mw690/9bd9d3e2gy1fgxa7mo39fj20m50i7glz.jpg" alt="邮件样例"><br><div align="center" style="color:#808080;font-size:12px"><em>邮件样例</em></div>
+
+<h2 id="六、待完善部分"><a href="#六、待完善部分" class="headerlink" title="六、待完善部分"></a>六、待完善部分</h2><p>平台目前有两个较大的功能欠缺：</p>
+<ul>
+<li>账户体系和权限控制</li>
+<li>代码动态编译运行的安全控制(沙箱)</li>
+</ul>
+<p>账户体系和权限控制目前没有实现，主要是时间成本的问题，考虑目前平台都是公司内部各测试组使用，暂时没有特别强的需求。至于动态编译运行的安全问题，主要是难度和时间成本两方面的原因，对于这个安全问题，目前我自己还没有一个周全的解决方案，欢迎提出宝贵意见，另一方面，作为内网运行的平台，安全需求相对较低。</p>
+
     
   </div>
 </article>
