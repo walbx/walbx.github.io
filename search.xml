@@ -4,6 +4,128 @@
   
     
     <entry>
+      <title><![CDATA[Web自动化测试平台设计与落地-概览]]></title>
+      <url>http://www.aloo.me/2017/06/25/Web%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B0%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%90%BD%E5%9C%B0-%E6%A6%82%E8%A7%88/</url>
+      <content type="html"><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><div align="center"><img src="http://wx2.sinaimg.cn/bmiddle/9bd9d3e2gy1fgxclqm6pfj20jo0bt0tz.jpg" alt="自动化金字塔-灵魂手绘版"></div>
+
+<div align="center" style="color:#808080;font-size:12px"><em>自动化金字塔-灵魂手绘版</em></div>
+
+<p>关于Web自动化测试，投入产出比是一个绕不开的话题，对于走到2017年的测试人，这时候可能已经有很多人会想到著名的<a href="http://martinfowler.com/bliki/TestPyramid.html" target="_blank" rel="external">自动化测试金字塔</a>。它形象地展示了Mike Cohn对自动化分层中各层所应该投入比重的看法，可以作为我们Web自动化实施策略的重要参考。</p>
+<p>  我最初开始接触Web自动化测试的时候，没有直接的领路人，测试行业知识也远不及如今这么丰富和易获取，当时我对于自动化测试的分层几乎没有什么了解，更不知道什么金字塔，就如很多同行一样，我一开始先入的是UI自动化的坑，那时候我还没有养成搜索英文资料的习惯，关于Selenuim2、WebDriver的中文信息还相当有限，国内主流还在Selenuim1, 先熟悉API，熟悉元素定位方式，进行一些简单的封装，到后来的PageObject，干劲十足。</p>
+<p>  不过在UI自动化这个阶段的后期，我已经对自动化测试有了更多的认识，加上工作变动，开始跳接口自动化的坑，通过工作经历、朋友和网络，对现状有了一定的了解，大约2015年的时候，心里隐约有一些想法，我们的测试对象的架构从最简单的三层架构，到分布式架构，再到SOA，到微服务，一路向前，而再看我们测试人对Web系统接口自动化的实现方式，直接使用如 Postman这样成熟工具的先不谈，就自研框架而言，有用Java的，如Junit/TestNG + Ant（ + Jenkins + JMeter + xxx),有用Python的，比如基于广为人知的RobotFramework，有用Ruby的，可能基于BDD界耳熟能详的Cucumber，等等，技术栈可能各有不同，本质上，大多是孤立的工程 + 文件形式管理的数据和用例。</p>
+<p>  可能四五年前，我看到的，大多是这样的方案，到今天，测试从业者的数量大幅度增长，有良好代码能力的并且能将其用到测试工作中的也越来越多，然而我看到的，这些的方案仍然占大多数，除开国内几家顶尖的互联网企业，就我所了解的以及网络上能搜索到的，尝试将方案走到简单Web系统的形式，用数据库存储数据，在线管理自动化实施的，很少。就这些方案本身，我觉得只要能达到自己团队的目的，都是很好的，没有优劣之分，我在意的是，我看到的变化低于预期很多，新的尝试低于预期很多，我觉得很多新的尝试，对于现在的测试人来说，难度并不会比以前的方案高多少，所需要的时间成本，也并不会高出多少，我希望我们测试人在做自动化实施的时候，能够像做业务测试一样，能够不局限于某一个方向。</p>
+<p>  到2016年，公司原有的自动化方案不能支撑一些新产品的需求，开始投入精力去设计和实现，当时感觉就像当年刚开始自主实施UI自动化一样，有一股劲。设计选型、编码、首版服务端上线、第一个团队开始使用、首版UI上线、1.6、2.0、…在功能方面来说，算是做出了勉强接近自己预期的系统<del>(如果不考虑那拙劣UI的话)</del>。 平台明面上是我单独完成的，但实际上，同行大牛对思路的肯定、工作安排上的支持、业务线伙伴的需求，都是不可或缺的。本来今年年就计划写关于这部分的文章，但由于今年工作、生活上都很忙，这半年几乎没有一个周末有自己独立的时间，<del>加上拖延症作祟，</del>所以直到今天才总算开始码了。</p>
+<p>  虽然并不确定这次计划输出的内容对读者能有多少帮助，但还是计划分几篇来写<del>，当然具体能输出几篇现在我也没底，拖延症是个强敌，所以决定第一篇先做一个总览</del></p>
+<p>  <del>这期的引言太长了点，抱歉。</del>希望本文能为有耐心读到这里的人带来些许价值</p>
+<h2 id="一、目标和定位"><a href="#一、目标和定位" class="headerlink" title="一、目标和定位"></a>一、目标和定位</h2><p>  首选需要说明的是，由于近年的工作重心主要在Web服务端，同时根据团队当前的工作情况，定的自动化策略是优先实施接口层而非UI层，所以平台当前的主要功能是围绕HTTP层的自动化测试展开的。</p>
+<p>  平台的定位是作为公司各业务线服务端的自动化公共平台，目标是通过快速落地自动化测试来支撑公司各产品组提高测试效率。</p>
+<h2 id="二、平台特点"><a href="#二、平台特点" class="headerlink" title="二、平台特点"></a>二、平台特点</h2><p>  最基本的特点，平台是一个前后端分离的Web服务、由数据库管理基本信息和测试用例、在线查看测试报告。详细一点的话，我认为通过对比的方式来呈现可能比较明了。这里以引言中提到的实施方案与本文所述的测试平台进行对比。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">对比项</th>
+<th style="text-align:center">业界常见项目</th>
+<th style="text-align:center">本文平台</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">定位</td>
+<td style="text-align:center">支撑某一产品线的接口自动化需求</td>
+<td style="text-align:center">支撑各产品线的多种自动化需求</td>
+</tr>
+<tr>
+<td style="text-align:center">适用性</td>
+<td style="text-align:center">适用于特定Web系统接口的自动化</td>
+<td style="text-align:center">适用于不同产品、不同设计理念接口的自动化</td>
+</tr>
+<tr>
+<td style="text-align:center">基础架构</td>
+<td style="text-align:center">独立的工程，基于文件管理数据</td>
+<td style="text-align:center">前后端分离的Web服务，基于数据库管理数据</td>
+</tr>
+<tr>
+<td style="text-align:center">落地方式</td>
+<td style="text-align:center">本地搭建运行环境，获取工程并运行以调试新用例</td>
+<td style="text-align:center">在线UI操作，开放接口便于CI集成</td>
+</tr>
+<tr>
+<td style="text-align:center">数据管理</td>
+<td style="text-align:center">通过更新/上传文件的形式管理用例</td>
+<td style="text-align:center">在线创建/更新用例，使用MySQL管理数据</td>
+</tr>
+<tr>
+<td style="text-align:center">运行方式</td>
+<td style="text-align:center">通过编辑Jenkins job/Crontab等实现运行计划管理</td>
+<td style="text-align:center">在线自定义运行时间计划和运行内容</td>
+</tr>
+<tr>
+<td style="text-align:center">结果校验</td>
+<td style="text-align:center">校验粒度较粗，数据库校验可能在代码中</td>
+<td style="text-align:center">基于Json解析的细粒度校验，在线管理数据库校验</td>
+</tr>
+<tr>
+<td style="text-align:center">历史数据</td>
+<td style="text-align:center">历史数据缺乏有效管理</td>
+<td style="text-align:center">在线查看历史运行记录和测试报告</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三、系统架构"><a href="#三、系统架构" class="headerlink" title="三、系统架构"></a>三、系统架构</h2><p>  整个平台的大体系统架构如下图，其中产品数据库交互主要是数据预置/清理/校验<br><img src="http://wx1.sinaimg.cn/large/9bd9d3e2gy1fgwfdy11isj20wf0j9n1o.jpg" alt="平台系统架构"></p>
+<div align="center" style="color:#808080;font-size:12px"><em>平台系统架构</em></div>
+
+<h2 id="四、相关技术栈"><a href="#四、相关技术栈" class="headerlink" title="四、相关技术栈"></a>四、相关技术栈</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">应用</th>
+<th style="text-align:center">技术/工具</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Web服务基础框架</td>
+<td style="text-align:center">Spring Boot</td>
+</tr>
+<tr>
+<td style="text-align:center">Web容器</td>
+<td style="text-align:center">Jetty</td>
+</tr>
+<tr>
+<td style="text-align:center">持久层框架</td>
+<td style="text-align:center">MyBatis</td>
+</tr>
+<tr>
+<td style="text-align:center">HTTP调用和校验基础框架</td>
+<td style="text-align:center"><a href="https://github.com/rest-assured/rest-assured" target="_blank" rel="external">REST-assured</a></td>
+</tr>
+<tr>
+<td style="text-align:center">用例调度执行</td>
+<td style="text-align:center">TestNG</td>
+</tr>
+<tr>
+<td style="text-align:center">HTML报告</td>
+<td style="text-align:center"><a href="https://github.com/allure-framework/allure1" target="_blank" rel="external">Allure</a></td>
+</tr>
+<tr>
+<td style="text-align:center">基础UI组件</td>
+<td style="text-align:center">Bootstrap</td>
+</tr>
+<tr>
+<td style="text-align:center">前后端交互</td>
+<td style="text-align:center">AJAX(Jquery)</td>
+</tr>
+<tr>
+<td style="text-align:center">在线代码编辑</td>
+<td style="text-align:center"><a href="https://github.com/ajaxorg/ace" target="_blank" rel="external">Ace</a></td>
+</tr>
+</tbody>
+</table>
+<p>关于在线代码编辑，主要提供给有基础代码能力的同学应用在复杂场景的自动化实施，普通的接口自动化需求不需要。后续文章会做更多的说明。</p>
+<h2 id="五、UI概览"><a href="#五、UI概览" class="headerlink" title="五、UI概览"></a>五、UI概览</h2><p><img src="http://wx4.sinaimg.cn/large/9bd9d3e2gy1fgxa7j5javj20ni0g3mz2.jpg" alt="基础信息管理"></p>
+<div align="center" style="color:#808080;font-size:12px"><em>基础信息管理</em></div><br><img src="http://wx2.sinaimg.cn/large/9bd9d3e2gy1fgxa7jwlzpj20os0i3gnt.jpg" alt="用例管理"><br><div align="center" style="color:#808080;font-size:12px"><em>用例管理</em></div><br><img src="http://wx2.sinaimg.cn/large/9bd9d3e2gy1fgxa7krk21j20ni0bfjsz.jpg" alt="定时计划管理"><br><div align="center" style="color:#808080;font-size:12px"><em>定时计划管理</em></div><br><img src="http://wx3.sinaimg.cn/large/9bd9d3e2gy1fgxa7lmvtoj20sv0bdq4b.jpg" alt="用例调试"><br><div align="center" style="color:#808080;font-size:12px"><em>用例调试</em></div><br><img src="http://wx1.sinaimg.cn/large/9bd9d3e2gy1fgxa7lx4djj20zq0a2wgz.jpg" alt="在线报告"><br><div align="center" style="color:#808080;font-size:12px"><em>在线报告</em></div><br><img src="http://wx3.sinaimg.cn/mw690/9bd9d3e2gy1fgxa7mo39fj20m50i7glz.jpg" alt="邮件样例"><br><div align="center" style="color:#808080;font-size:12px"><em>邮件样例</em></div>]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Locust性能测试实施细节]]></title>
       <url>http://www.aloo.me/2017/04/09/Locust%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%AE%9E%E6%96%BD%E7%BB%86%E8%8A%82/</url>
       <content type="html"><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>当我们做Web系统性能测试方案时，压力模拟工具的选择通常是一个绕不开的环节。对于大部分互联网公司的业务规模和测试资源投入，JMeter这个老牌开源性能测试工具能够满足大部分测试需求，它也可能是世面上书籍、博客教程丰富程度仅次于LoadRunner的性能测试工具。然而当我们的场景需要模拟的并发用户数以千为单位时，使用JMeter的成本越来越大，甚至超出我们掌握的资源。此时，我们开始寻找更低成本的方案，而<a href="http://locust.io/" target="_blank" rel="external">Locust</a>，为这样的方案带来了一种可能。</p>
