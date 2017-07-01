@@ -4,7 +4,7 @@
     
   <url>
     <loc>http://www.aloo.me/2017/06/25/Web%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B0%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%90%BD%E5%9C%B0-%E6%A6%82%E8%A7%88/</loc>
-    <lastmod>2017-06-25T08:08:16.107Z</lastmod>
+    <lastmod>2017-07-01T01:12:21.071Z</lastmod>
     <data>
         <display>
         <title>Web自动化测试平台设计与落地-概览</title>
@@ -163,9 +163,9 @@
         <title>Dubbo高级特性实践-泛化调用</title>
         <pubTime>2016-07-10T06:24:24.000Z</pubTime>
         
-        <tag>Dubbo </tag>
-         
         <tag>微服务 </tag>
+         
+        <tag>Dubbo </tag>
          
          
            
@@ -207,9 +207,9 @@
         <title>正确、安全地停止SpringBoot应用</title>
         <pubTime>2016-06-27T08:35:29.000Z</pubTime>
         
-        <tag>微服务 </tag>
-         
         <tag>Spring Boot </tag>
+         
+        <tag>微服务 </tag>
          
          
            
