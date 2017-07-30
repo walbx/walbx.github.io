@@ -15,12 +15,12 @@
     <meta name="keywords" content="性能测试,JMeter," />
   
 
-  <meta name="description" content="零.引言  我们对被测应用进行性能测试时，除了关注吞吐量、响应时间等应用自身的表现外，对应用运行所涉及的服务器资源的使用情况，也是非常重要的方面，通过实时监控，可以准确的把握不同测试场景下服务器资源消耗情况的变化，对于应用性能分析有着重要的作用，同时也是调整测试场景设计的重要依据。对于使用JMeter执行性能测试的朋友，可能大都知道jmeter-plugins中就有用于服务器资源监控的插件Perf">
+  <meta name="description" content="零.引言  我们对被测应用进行性能测试时，除了关注吞吐量、响应时间等应用自身的表现外，对应用运行所涉及的服务器资源的使用情况，也是非常重要的方面，通过实时监控，可以准确的把握不同测试场景下服务器资源消耗情况的变化，对于应用性能分析有着重要的作用，同时也是调整测试场景设计的重要依据。对于使用JMeter执行性能测试的朋友，可能大都知道jmeter-plugins中就有用于服务器资源监控的插件Pe">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JMeter性能测试-服务器资源监控插件详解">
 <meta property="og:url" content="http://www.aloo.me/2017/07/30/JMeter性能测试-服务器资源监控插件详解/index.html">
 <meta property="og:site_name" content="Luo's Blog">
-<meta property="og:description" content="零.引言  我们对被测应用进行性能测试时，除了关注吞吐量、响应时间等应用自身的表现外，对应用运行所涉及的服务器资源的使用情况，也是非常重要的方面，通过实时监控，可以准确的把握不同测试场景下服务器资源消耗情况的变化，对于应用性能分析有着重要的作用，同时也是调整测试场景设计的重要依据。对于使用JMeter执行性能测试的朋友，可能大都知道jmeter-plugins中就有用于服务器资源监控的插件Perf">
+<meta property="og:description" content="零.引言  我们对被测应用进行性能测试时，除了关注吞吐量、响应时间等应用自身的表现外，对应用运行所涉及的服务器资源的使用情况，也是非常重要的方面，通过实时监控，可以准确的把握不同测试场景下服务器资源消耗情况的变化，对于应用性能分析有着重要的作用，同时也是调整测试场景设计的重要依据。对于使用JMeter执行性能测试的朋友，可能大都知道jmeter-plugins中就有用于服务器资源监控的插件Pe">
 <meta property="og:image" content="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1t7yuyo4j20e90cl754.jpg">
 <meta property="og:image" content="http://wx2.sinaimg.cn/bmiddle/9bd9d3e2gy1fi13xskkpyj20wx0f3gq3.jpg">
 <meta property="og:image" content="http://wx1.sinaimg.cn/bmiddle/9bd9d3e2gy1fi14tudbu4j20jr0ddq5z.jpg">
@@ -30,10 +30,10 @@
 <meta property="og:image" content="http://wx4.sinaimg.cn/large/9bd9d3e2gy1fi1qu1tvjwj20ex07oq3v.jpg">
 <meta property="og:image" content="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1qzhv3mfj20rd0aemzl.jpg">
 <meta property="og:image" content="http://wx1.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1qzjj606j20r6094tak.jpg">
-<meta property="og:updated_time" content="2017-07-30T04:44:44.829Z">
+<meta property="og:updated_time" content="2017-07-30T04:53:23.895Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JMeter性能测试-服务器资源监控插件详解">
-<meta name="twitter:description" content="零.引言  我们对被测应用进行性能测试时，除了关注吞吐量、响应时间等应用自身的表现外，对应用运行所涉及的服务器资源的使用情况，也是非常重要的方面，通过实时监控，可以准确的把握不同测试场景下服务器资源消耗情况的变化，对于应用性能分析有着重要的作用，同时也是调整测试场景设计的重要依据。对于使用JMeter执行性能测试的朋友，可能大都知道jmeter-plugins中就有用于服务器资源监控的插件Perf">
+<meta name="twitter:description" content="零.引言  我们对被测应用进行性能测试时，除了关注吞吐量、响应时间等应用自身的表现外，对应用运行所涉及的服务器资源的使用情况，也是非常重要的方面，通过实时监控，可以准确的把握不同测试场景下服务器资源消耗情况的变化，对于应用性能分析有着重要的作用，同时也是调整测试场景设计的重要依据。对于使用JMeter执行性能测试的朋友，可能大都知道jmeter-plugins中就有用于服务器资源监控的插件Pe">
 <meta name="twitter:image" content="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1t7yuyo4j20e90cl754.jpg">
 
   
@@ -145,7 +145,7 @@ ga('send', 'pageview');
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#零-引言"><span class="toc-text">零.引言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-曲线图"><span class="toc-text">2.2  曲线图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-自定义指标"><span class="toc-text">2.3 自定义指标</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#叁-总结"><span class="toc-text">叁.总结</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#零-引言"><span class="toc-text">零.引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#壹-基础"><span class="toc-text">壹.基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-ServerAgent部署"><span class="toc-text">1.1 ServerAgent部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-PerfMon插件使用"><span class="toc-text">1.2 PerfMon插件使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#贰-进阶"><span class="toc-text">贰.进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-指标"><span class="toc-text">2.1 指标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-曲线图"><span class="toc-text">2.2  曲线图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-自定义指标"><span class="toc-text">2.3 自定义指标</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#叁-总结"><span class="toc-text">叁.总结</span></a></li></ol>
   </div>
 
 
@@ -183,7 +183,42 @@ ga('send', 'pageview');
 
   <div class="article-content">
     
-      <h2 id="零-引言"><a href="#零-引言" class="headerlink" title="零.引言"></a>零.引言</h2><div align="center"><img src="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1t7yuyo4j20e90cl754.jpg" alt=""></div><br>  我们对被测应用进行性能测试时，除了关注吞吐量、响应时间等应用自身的表现外，对应用运行所涉及的服务器资源的使用情况，也是非常重要的方面，通过实时监控，可以准确的把握不同测试场景下服务器资源消耗情况的变化，对于应用性能分析有着重要的作用，同时也是调整测试场景设计的重要依据。对于使用JMeter执行性能测试的朋友，可能大都知道<a href="https://jmeter-plugins.org/" target="_blank" rel="external">jmeter-plugins</a>中就有用于服务器资源监控的插件<a href="https://jmeter-plugins.org/wiki/PerfMon/" target="_blank" rel="external">PerfMon Metrics Collector</a>，同时也有不少同学会选择类似<a href="http://nmon.sourceforge.net/pmwiki.php" target="_blank" rel="external">nmon</a>的独立监控方案。<br><br>之所以决定写这篇文章，一是因为在使用JMeter作为性能测试工具的情况下，使用专为其设计的插件会更方便，二是对于普通互联网公司的性能测试方案，这款插件所提供的功能已经可以满足其资源监控方面的大多数需求，而最重要的一点，是在技术群里发现虽然很多同学知道或者在用这款插件，但是对于一些概念和细节，并不了解，导致不能很好的满足自己的需求，而现在网络上介绍这款插件的博客文章，大都是Quick Start式的入门文章，并不能解答这些同学的疑问。<br>注：本文使用的JMeter版本为当前最新release版本3.2。<br><br>## 壹.基础<br>本来PerfMon插件的安装部署不是本文的重点，但为了保持文章的完整性，这里还是进行简单的介绍。有基础的同学可以跳过。<br><br>使用PerfMon进行服务器资源监控的方案由两部分来实现<br>1. <a href="https://jmeter-plugins.org/wiki/PerfMonAgent/" target="_blank" rel="external">ServerAgent</a>，部署在被测服务器，负责资源耗用数据的采集，其功能实现主要基于hyperic的<a href="https://github.com/hyperic/sigar" target="_blank" rel="external">SIGAR</a>。<br>2. <a href="https://jmeter-plugins.org/wiki/PerfMon/" target="_blank" rel="external">PerfMon Listener</a>，以插件形式集成到JMeter，作为其中一个Listener。<br><br>### 1.1 ServerAgent部署<br>  - <strong>前提</strong>：ServerAgent运行需要jre1.4以上版本支持。<br>  - <strong>下载</strong>：从<a href="https://jmeter-plugins.org/wiki/PerfMonAgent/" target="_blank" rel="external">官方下载</a><br>  - <strong>部署</strong>：将下载的<code>.zip</code>放置到被测服务器，解压后，直接运行<code>startAgent.sh</code>(Linux)/<code>startAgent.bat</code>(Windows)即可，与JMeter进行数据传输时使用简单的文本协议，默认使用TCP协议，默认端口4444。当然，在Linux，我们通常将其放在后台运行，比如用nohup。<br>- <strong>验证</strong>：为了保证测试过程的顺畅，我们可以先行确认JMeter压力机与被测服务器上部署的ServerAgent的通信是否正常。一个简便的方法是在JMeter压力机使用telnet像ServerAgent发送”test”，如<code>telnet 192.168.18.10 4444</code>，连通后，输入<code>test</code>，正常情况下ServerAgent会输出类似<code>INFO    2017-07-29 23:10:52.430 [kg.apc.p] (): Yep, we received the &#39;test&#39; command</code>的日志。<br><br>可以在运行脚本时添加<code>--tcp-port xxx</code>来指定端口，如<code>$ ./startAgent.sh --tcp-port 3450</code>，需要注意的是此时JMeterPerfMon插件使用时也需要对绑定端口进行对应修改。更多信息可以参考下载页的官方文档。<br><br>### 1.2 PerfMon插件使用<br>- <strong>安装</strong>：JMeter3.0之后，有两种方式安装<a href="https://jmeter-plugins.org/" target="_blank" rel="external">jmeter-plugins</a>所包含的插件。<br>    - 第一种方式：到<a href="https://jmeter-plugins.org" target="_blank" rel="external">jmeter-plugins官网</a>搜索<code>PerfMon</code>并下载，将得到的jar包放置于JMeter安装目录的<code>lib/ext/</code>路径下，重启JMeter，从Listener中选择使用插件。<br><div align="center"><img src="http://wx2.sinaimg.cn/bmiddle/9bd9d3e2gy1fi13xskkpyj20wx0f3gq3.jpg" alt="图1 插件下载"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图1 插件下载</em></div><br>    - 第二种方式：使用Plugins Manager，不过由于国内众所周知的原因，很多同学可能遇到网络不通不能展示插件的问题，这里就不展开了，可参考我之前的文章：<a href="http://www.jianshu.com/p/31776d20c22c" target="_blank" rel="external">JMeter性能测试3.0时代之-全新JMeter插件管理</a><br>- <strong>使用</strong>：如图2所示，在Listener中选择PerfMon插件，添加到测试计划中，然后参考图3进行配置，包括配置部署了ServerAgent的被测服务器的IP、ServerAgent使用的端口、要获取和展示的资源项等。测试启动后<br><div align="center"><img src="http://wx1.sinaimg.cn/bmiddle/9bd9d3e2gy1fi14tudbu4j20jr0ddq5z.jpg" alt="图2 使用PerfMon插件"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图2 使用PerfMon插件</em></div><br><div align="center"><img src="http://wx1.sinaimg.cn/large/9bd9d3e2gy1fi150q73lwj20id07tjsy.jpg" alt="图3 配置"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图3 配置</em></div><br>- <strong>数据观察和保存</strong>：在使用GUI模式进行调试时，测试启动后，可以直接在对应窗口观察到根据采集数据描绘的图形。而要在使用NO GUI模式正式执行测试后，查看监控数据，可以在设计测试计划时在图3的<code>Filename</code>位置配置数据要保存的地址，它和保存JMeter测试主数据的方式一样，需要注意的是不要和JMeter测试主数据保存到同一个文件。在测试执行完成后，再在插件界面载入这个文件，即可显示监控数据的图形展示。<br><br>## 贰.进阶<br>从同事、技术群友们那里，我了解到有不少同学对于PerfMon插件展示的各个指标数据的含义，特别是单位并不是特别明确，所以先讲一下这部分。另外对于数据曲线图的展示，也有一些点值得说明。<br>### 2.1 指标<br>关于监控指标数据的疑惑，大多可以从PerfMon插件的<code>Metric parameter</code>设置界面找到答案。我们知道对于服务器如CPU、内存等每一个监控指标类型，都有多种数据从不同维度来体现资源使用情况，比如对于CPU，在Linux系统用<code>top</code>命令，就可以看<code>idle</code>、<code>user</code>、<code>system</code>等数据。<br><br>对于PerfMon插件，可以通过<code>Metric parameter</code>来设置某种资源具体要收集和展示的数据，只是它的入口并不是很醒目，如下图4右上的红色箭头所指，需要双击输入框后，点击最后边的按钮打开，打开的界面如图4中级红色箭头所指，虽然每种指标的具体配置项不同，但结构相同，都分为<code>Primary Metrics</code>、<code>Additional Metrics</code>等等，Primary是官方认为常用的，通常也是实际工作中更关心，更具有参考意义的指标项，Additional则是在一些特殊场景可能需要了解的指标项。<br><div align="center"><img src="http://wx2.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1acu0psvj20wk0e3n1m.jpg" alt="图4 监控指标参数设置"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图4 监控指标参数设置</em></div>
+      <div align="center"><img src="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1t7yuyo4j20e90cl754.jpg" alt=""></div>
+
+<h2 id="零-引言"><a href="#零-引言" class="headerlink" title="零.引言"></a>零.引言</h2><p>  我们对被测应用进行性能测试时，除了关注吞吐量、响应时间等应用自身的表现外，对应用运行所涉及的服务器资源的使用情况，也是非常重要的方面，通过实时监控，可以准确的把握不同测试场景下服务器资源消耗情况的变化，对于应用性能分析有着重要的作用，同时也是调整测试场景设计的重要依据。对于使用JMeter执行性能测试的朋友，可能大都知道<a href="https://jmeter-plugins.org/" target="_blank" rel="external">jmeter-plugins</a>中就有用于服务器资源监控的插件<a href="https://jmeter-plugins.org/wiki/PerfMon/" target="_blank" rel="external">PerfMon Metrics Collector</a>，同时也有不少同学会选择类似<a href="http://nmon.sourceforge.net/pmwiki.php" target="_blank" rel="external">nmon</a>的独立监控方案。</p>
+<p>之所以决定写这篇文章，一是因为在使用JMeter作为性能测试工具的情况下，使用专为其设计的插件会更方便，二是对于普通互联网公司的性能测试方案，这款插件所提供的功能已经可以满足其资源监控方面的大多数需求，而最重要的一点，是在技术群里发现虽然很多同学知道或者在用这款插件，但是对于一些概念和细节，并不了解，导致不能很好的满足自己的需求，而现在网络上介绍这款插件的博客文章，大都是Quick Start式的入门文章，并不能解答这些同学的疑问。<br>注：本文使用的JMeter版本为当前最新release版本3.2。</p>
+<h2 id="壹-基础"><a href="#壹-基础" class="headerlink" title="壹.基础"></a>壹.基础</h2><p>本来PerfMon插件的安装部署不是本文的重点，但为了保持文章的完整性，这里还是进行简单的介绍。有基础的同学可以跳过。</p>
+<p>使用PerfMon进行服务器资源监控的方案由两部分来实现</p>
+<ol>
+<li><a href="https://jmeter-plugins.org/wiki/PerfMonAgent/" target="_blank" rel="external">ServerAgent</a>，部署在被测服务器，负责资源耗用数据的采集，其功能实现主要基于hyperic的<a href="https://github.com/hyperic/sigar" target="_blank" rel="external">SIGAR</a>。</li>
+<li><a href="https://jmeter-plugins.org/wiki/PerfMon/" target="_blank" rel="external">PerfMon Listener</a>，以插件形式集成到JMeter，作为其中一个Listener。</li>
+</ol>
+<h3 id="1-1-ServerAgent部署"><a href="#1-1-ServerAgent部署" class="headerlink" title="1.1 ServerAgent部署"></a>1.1 ServerAgent部署</h3><ul>
+<li><strong>前提</strong>：ServerAgent运行需要jre1.4以上版本支持。</li>
+<li><strong>下载</strong>：从<a href="https://jmeter-plugins.org/wiki/PerfMonAgent/" target="_blank" rel="external">官方下载</a></li>
+<li><strong>部署</strong>：将下载的<code>.zip</code>放置到被测服务器，解压后，直接运行<code>startAgent.sh</code>(Linux)/<code>startAgent.bat</code>(Windows)即可，与JMeter进行数据传输时使用简单的文本协议，默认使用TCP协议，默认端口4444。当然，在Linux，我们通常将其放在后台运行，比如用nohup。<ul>
+<li><strong>验证</strong>：为了保证测试过程的顺畅，我们可以先行确认JMeter压力机与被测服务器上部署的ServerAgent的通信是否正常。一个简便的方法是在JMeter压力机使用telnet像ServerAgent发送”test”，如<code>telnet 192.168.18.10 4444</code>，连通后，输入<code>test</code>，正常情况下ServerAgent会输出类似<code>INFO    2017-07-29 23:10:52.430 [kg.apc.p] (): Yep, we received the &#39;test&#39; command</code>的日志。</li>
+</ul>
+</li>
+</ul>
+<p>可以在运行脚本时添加<code>--tcp-port xxx</code>来指定端口，如<code>$ ./startAgent.sh --tcp-port 3450</code>，需要注意的是此时JMeterPerfMon插件使用时也需要对绑定端口进行对应修改。更多信息可以参考下载页的官方文档。</p>
+<h3 id="1-2-PerfMon插件使用"><a href="#1-2-PerfMon插件使用" class="headerlink" title="1.2 PerfMon插件使用"></a>1.2 PerfMon插件使用</h3><ul>
+<li><strong>安装</strong>：JMeter3.0之后，有两种方式安装<a href="https://jmeter-plugins.org/" target="_blank" rel="external">jmeter-plugins</a>所包含的插件。<ul>
+<li>第一种方式：到<a href="https://jmeter-plugins.org" target="_blank" rel="external">jmeter-plugins官网</a>搜索<code>PerfMon</code>并下载，将得到的jar包放置于JMeter安装目录的<code>lib/ext/</code>路径下，重启JMeter，从Listener中选择使用插件。<div align="center"><img src="http://wx2.sinaimg.cn/bmiddle/9bd9d3e2gy1fi13xskkpyj20wx0f3gq3.jpg" alt="图1 插件下载"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图1 插件下载</em></div></li>
+<li>第二种方式：使用Plugins Manager，不过由于国内众所周知的原因，很多同学可能遇到网络不通不能展示插件的问题，这里就不展开了，可参考我之前的文章：<a href="http://www.jianshu.com/p/31776d20c22c" target="_blank" rel="external">JMeter性能测试3.0时代之-全新JMeter插件管理</a></li>
+</ul>
+</li>
+<li><strong>使用</strong>：如图2所示，在Listener中选择PerfMon插件，添加到测试计划中，然后参考图3进行配置，包括配置部署了ServerAgent的被测服务器的IP、ServerAgent使用的端口、要获取和展示的资源项等。测试启动后</li>
+</ul>
+<div align="center"><img src="http://wx1.sinaimg.cn/bmiddle/9bd9d3e2gy1fi14tudbu4j20jr0ddq5z.jpg" alt="图2 使用PerfMon插件"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图2 使用PerfMon插件</em></div><br><div align="center"><img src="http://wx1.sinaimg.cn/large/9bd9d3e2gy1fi150q73lwj20id07tjsy.jpg" alt="图3 配置"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图3 配置</em></div>
+
+<ul>
+<li><strong>数据观察和保存</strong>：在使用GUI模式进行调试时，测试启动后，可以直接在对应窗口观察到根据采集数据描绘的图形。而要在使用NO GUI模式正式执行测试后，查看监控数据，可以在设计测试计划时在图3的<code>Filename</code>位置配置数据要保存的地址，它和保存JMeter测试主数据的方式一样，需要注意的是不要和JMeter测试主数据保存到同一个文件。在测试执行完成后，再在插件界面载入这个文件，即可显示监控数据的图形展示。</li>
+</ul>
+<h2 id="贰-进阶"><a href="#贰-进阶" class="headerlink" title="贰.进阶"></a>贰.进阶</h2><p>从同事、技术群友们那里，我了解到有不少同学对于PerfMon插件展示的各个指标数据的含义，特别是单位并不是特别明确，所以先讲一下这部分。另外对于数据曲线图的展示，也有一些点值得说明。</p>
+<h3 id="2-1-指标"><a href="#2-1-指标" class="headerlink" title="2.1 指标"></a>2.1 指标</h3><p>关于监控指标数据的疑惑，大多可以从PerfMon插件的<code>Metric parameter</code>设置界面找到答案。我们知道对于服务器如CPU、内存等每一个监控指标类型，都有多种数据从不同维度来体现资源使用情况，比如对于CPU，在Linux系统用<code>top</code>命令，就可以看<code>idle</code>、<code>user</code>、<code>system</code>等数据。</p>
+<p>对于PerfMon插件，可以通过<code>Metric parameter</code>来设置某种资源具体要收集和展示的数据，只是它的入口并不是很醒目，如下图4右上的红色箭头所指，需要双击输入框后，点击最后边的按钮打开，打开的界面如图4中级红色箭头所指，虽然每种指标的具体配置项不同，但结构相同，都分为<code>Primary Metrics</code>、<code>Additional Metrics</code>等等，Primary是官方认为常用的，通常也是实际工作中更关心，更具有参考意义的指标项，Additional则是在一些特殊场景可能需要了解的指标项。</p>
+<div align="center"><img src="http://wx2.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1acu0psvj20wk0e3n1m.jpg" alt="图4 监控指标参数设置"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图4 监控指标参数设置</em></div>
 
 <p>这里先简单说一下几种主要的资源类型的指标项，对应的图就不贴了，太占篇幅，影响阅读：</p>
 <ol>
@@ -218,35 +253,39 @@ ga('send', 'pageview');
 </li>
 <li><p><strong>数值</strong>：</p>
 <ul>
-<li>当一个PerfMon监听器中展示多种指标项的数据时，为了曲线图的可观察性，插件会自动进行优化，如图5所示，我们看到在CPU项和内存项都有个x10，<strong>代表曲线图中展示的数值是在采集到的真实数值上放大了10倍</strong>，目的是为了保证不同数据项在同一坐标系中展示时，各项都变化趋势都能够被观察到。<div align="center"><img src="http://wx2.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1pdlehjyj20rk0f2wjj.jpg" alt="图5 曲线图"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图5 曲线图</em></div></li>
+<li>当一个PerfMon监听器中展示多种指标项的数据时，为了曲线图的可观察性，插件会自动进行优化，如图5所示，我们看到在CPU项和内存项都有个x10，<strong>代表曲线图中展示的数值是在采集到的真实数值上放大了10倍</strong>，目的是为了保证不同数据项在同一坐标系中展示时，各项都变化趋势都能够被观察到。</li>
 </ul>
 </li>
+</ol>
+<div align="center"><img src="http://wx2.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1pdlehjyj20rk0f2wjj.jpg" alt="图5 曲线图"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图5 曲线图</em></div>
+
+<ol>
 <li><strong>曲线图配置</strong>：<ul>
 <li>插件界面的<code>Rows</code>标签页可以调整要在曲线图中展示的指标项</li>
-<li><code>Setting</code>标签页中常用的有：<ul>
+<li><code>Setting</code>标签页中常用的有<ul>
 <li><code>use relative times</code>用于配置曲线图x轴表示相对时间(测试开始时为0)还是实际系统时间。</li>
 <li><code>Auto-zoom rows for best fit</code>默认勾选，则会有上一节讲数值时提到的展示数据自动放大的功能，取消勾选则全部展示采集的实际数值。</li>
 <li><code>Limit number of points in row to xx points</code>：勾选后可以设定曲线图展示的采样点数量，我们的测试报告会有不同的角色查看，其中一些角色可能不具备也不需要对监控数据的细节理解能力，此时我们提供的监控曲线图应该是易读的，如果按照实际的所有采样点来渲染出曲线图，可能会有很多偏离趋势的噪点数据，这对于不了解的人来说可能会有很多疑惑，所以当我们有了分析结论，最后报告呈现的时候，可以考虑通过调整采样点，来让曲线图更好的展示资源使用趋势，消除其他不必要的信息。<div align="center"><img src="http://wx4.sinaimg.cn/large/9bd9d3e2gy1fi1qu1tvjwj20ex07oq3v.jpg" alt="图6 曲线图配置"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图6 曲线图配置</em></div></li>
-<li><code>Force maximum Y axis value to xx</code>，实际上我更多会选择不勾选，不勾选的情况下，插件在描绘曲线图的时候，会根据数值大小自动调整Y轴最大值，以达到更佳可读性，如图7和图8，分别是不勾选，和勾选后设置最大值为100时的曲线图效果，显然图7可以更容易的观察到变化的细节。不过与上一项类似，可能在对外出具报告时，为了更少的解释说明，可能需要某个指定的数值。<div align="center"><img src="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1qzhv3mfj20rd0aemzl.jpg" alt="图7 不自定义Y轴"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图7 不自定义Y轴</em></div><br><div align="center"><img src="http://wx1.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1qzjj606j20r6094tak.jpg" alt="图8 自定义Y轴"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图8 自定义Y轴</em></div>
-
-</li>
+<li><code>Force maximum Y axis value to xx</code>，实际上我更多会选择不勾选，不勾选的情况下，插件在描绘曲线图的时候，会根据数值大小自动调整Y轴最大值，以达到更佳可读性，如图7和图8，分别是不勾选，和勾选后设置最大值为100时的曲线图效果，显然图7可以更容易的观察到变化的细节。不过与上一项类似，可能在对外出具报告时，为了更少的解释说明，可能需要某个指定的数值。</li>
 </ul>
 </li>
 </ul>
 </li>
 </ol>
+<div align="center"><img src="http://wx4.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1qzhv3mfj20rd0aemzl.jpg" alt="图7 不自定义Y轴"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图7 不自定义Y轴</em></div><br><div align="center"><img src="http://wx1.sinaimg.cn/bmiddle/9bd9d3e2gy1fi1qzjj606j20r6094tak.jpg" alt="图8 自定义Y轴"></div><br><div align="center" style="color:#808080;font-size:12px"><em>图8 自定义Y轴</em></div>
+
 <h3 id="2-3-自定义指标"><a href="#2-3-自定义指标" class="headerlink" title="2.3 自定义指标"></a>2.3 自定义指标</h3><ol>
 <li><strong>EXEC</strong><ul>
 <li>在插件界面选择指标类型时，可以看到一个<code>EXEC</code>选型，该选项允许我们在后面的Metric parameter中配置一个命令语句(该语句最终应该输出单个数值)，测试执行时，ServerAgent将执行该命令，同时插件将接收ServerAgent捕获的输出数值。</li>
-<li>语法规则：EXEC所配置的语句需要按照一定的规则来填写，先是给出命令的执行程序的位置，然后将具体的命令以及命令的参数作为，命令和命令参数都需要用冒号”:”来隔开。比如<code>/bin/sh:-c:free |grep Mem |awk &#39;{pring $7}&#39;</code></li>
+<li>语法规则：EXEC所配置的语句需要按照一定的规则来填写，先是给出命令的执行程序的位置，然后将具体的命令以及命令的参数作为，命令和命令参数都需要用冒号”:”来隔开。比如<code>/bin/sh:-c:free |grep Mem |awk &#39;{pring $7}&#39;</code><ul>
+<li><code>/bin/sh</code>，代表命令的执行程序</li>
+<li><code>-c</code>，即<code>/bin/sh</code>的<code>-c</code>选型，有-c选型的情况下，将从后面的字符串按一定规则解析为命令和命令参数</li>
+<li>可以看到有用冒号分隔了执行程序/选型参数/命令语句</li>
+<li>对于windows，也类似，如<code>C\:\Windows\System32\cmd.exe:/c:echo %RANDOM%</code></li>
 </ul>
 </li>
-</ol>
-<pre><code>    - `/bin/sh`，代表命令的执行程序
-    - `-c`，即`/bin/sh`的`-c`选型，有-c选型的情况下，将从后面的字符串按一定规则解析为命令和命令参数
-    - 可以看到有用冒号分隔了执行程序/选型参数/命令语句
-    - 对于windows，也类似，如`C\:\Windows\System32\cmd.exe:/c:echo %RANDOM%`
-</code></pre><ol>
+</ul>
+</li>
 <li><strong>TAIL</strong><ul>
 <li>如同Linux的<code>tail</code>命令，读取文件的最后一行，用在这里，需要文件每一行只包含一个单独的数值。借助tail，我们可以通过自定义脚本监控任意指标，只需要脚本的输出满足要求即可。</li>
 <li>显而易见，TAIL后面的参数就是配置要读取的文件的地址，测试执行时，ServerAgent将根据配置读取所在服务器的指定文件。</li>
