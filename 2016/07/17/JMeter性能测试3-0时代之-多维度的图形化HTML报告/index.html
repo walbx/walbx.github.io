@@ -26,7 +26,8 @@
 <meta property="og:image" content="http://ww4.sinaimg.cn/large/9bd9d3e2gw1f5x04glvcqj20ki0cm3zr.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x0ao5dkjj212u0fqjvr.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/9bd9d3e2gw1f5x04h6f3dj20bl06cq3b.jpg">
-<meta property="og:updated_time" content="2016-08-19T08:56:16.000Z">
+<meta property="og:image" content="http://wx1.sinaimg.cn/bmiddle/9bd9d3e2gy1fi58dh2qwfj20li0e774w.jpg">
+<meta property="og:updated_time" content="2017-08-02T03:58:08.848Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JMeter性能测试3.0时代之-多维度的图形化HTML报告">
 <meta name="twitter:description" content="本文主要介绍JMeter3.0引入的新特性：Dashboard Report，图形化的HTML格式多维度测试报告。借助这个特性，可以很大程度上降低我们搭建基于JMeter的性能测试平台时，在结果展示上的难度，将更多的精力放在后端的平台功能而不是去临时学习前端图表库。">
@@ -141,7 +142,7 @@ ga('send', 'pageview');
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-为什么谈这个新特性"><span class="toc-text">一.为什么谈这个新特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-新特性简介"><span class="toc-text">二.新特性简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-快速入门"><span class="toc-text">三.快速入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-确认基本配置"><span class="toc-text">1.确认基本配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-生成报告"><span class="toc-text">2.生成报告</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-自定义配置"><span class="toc-text">四.自定义配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-总体配置"><span class="toc-text">1.总体配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-图表配置"><span class="toc-text">2.图表配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-输出配置"><span class="toc-text">3.输出配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-总结"><span class="toc-text">五.总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-为什么谈这个新特性"><span class="toc-text">一.为什么谈这个新特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-新特性简介"><span class="toc-text">二.新特性简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-快速入门"><span class="toc-text">三.快速入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-确认基本配置"><span class="toc-text">1.确认基本配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-生成报告"><span class="toc-text">2.生成报告</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-自定义配置"><span class="toc-text">四.自定义配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-总体配置"><span class="toc-text">1.总体配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-图表配置"><span class="toc-text">2.图表配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-输出配置"><span class="toc-text">3.输出配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-报告定制"><span class="toc-text">4.报告定制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-总结"><span class="toc-text">五.总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li></ol>
   </div>
 
 
@@ -340,6 +341,21 @@ aggregate_rpt_pct3 : Defaults to 99
 <ul>
 <li><code>property.output_dir</code> 配置默认的报告输出路径。在命令行可以用-o选项来设置特定的路径覆盖该配置。</li>
 <li><code>html.series_filter</code> 用于过滤展示内容。如在user.properties添加如下配置：<br><code>jmeter.reportgenerator.exporter.html.series_filter=(^Login)(-success|-failure)?</code><br>则最后的报告只展示名为Login这个取样器的数据。该配置包含两部分，<code>(-success|-failure)?</code>是<code>Transactions per second</code>图表所依赖的配置。前面部分接受一个正则表达式用来过滤。</li>
+</ul>
+<h3 id="4-报告定制"><a href="#4-报告定制" class="headerlink" title="4.报告定制"></a>4.报告定制</h3><p>JMeter的HTML报告生成时是使用了固定的模板，模板文件路径为<code>./bin/report-template</code>。<br>进入该目录可以看到报告的每个页面都有一个.fmkr模板文件，包括<code>index.html.fmkr</code>和<code>./content/pages</code>路径下的几个文件。通过查看这些模板文件，就可以知道怎样去进行报告的轻度定制，比如将一些文本修改得更易懂，或者修改为中文等</p>
+<ul>
+<li>页面的title<ul>
+<li>默认为”Apache JMeter Dashboard”</li>
+<li>可以由<code>reportgenerator.properties</code>中的<code>jmeter.reportgenerator.report_title</code>来统一定义，这种方式就是所有页面的title都使用同一个。</li>
+<li>也可以直接修改对应的.fmkr文件中的title标签中双引号内的值，如<code>&lt;title&gt;${reportTitle!&quot;想要设置的title&quot;}&lt;/title&gt;</code>，这中方式可以为每个页面单独定义title</li>
+</ul>
+</li>
+<li>图表的名称<ul>
+<li>当前版本下，各图表的名称是直接在模板文件中定义，要修改也是直接修改模板文件中对应元素的值即可</li>
+<li>如要修改<code>Transactions Per Second</code>图表的名称，可以直接在<code>./content/pages/Throughput.html.fmkr</code>文件中修改，效果如下图<br><img src="http://wx1.sinaimg.cn/bmiddle/9bd9d3e2gy1fi58dh2qwfj20li0e774w.jpg" alt="自定义图表名称"></li>
+</ul>
+</li>
+<li>页面的其他各元素也可以用相同的方法进行定制</li>
 </ul>
 <h2 id="五-总结"><a href="#五-总结" class="headerlink" title="五.总结"></a>五.总结</h2><p>本次介绍的<code>Dashboard Report</code>特性本质上是Apache JMeter对于测试结果数据可视化方式的顺应时代的更新，虽然算是姗姗来迟，虽然并不酷炫，但至少，对于要需要基于它来执行性能测试的人来说，仍然是一个福音。最后，感谢Apache JMeter项目的各位贡献者对它的持续更新。</p>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
